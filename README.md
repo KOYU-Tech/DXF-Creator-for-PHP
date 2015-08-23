@@ -1,4 +1,4 @@
-# DXF-Creator-for-PHP
+# DXF Creator for PHP
 
 A simple DXF creator for PHP.
 This code is the upgrade of [DXF-Writer](http://www.phpclasses.org/package/7954-PHP-Generate-CAD-files-in-the-AutoCAD-DXF-format.html).
@@ -45,4 +45,3 @@ or
   }
 ```
 
-EOF
