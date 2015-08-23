@@ -1,8 +1,9 @@
 # DXF-Creator-for-PHP
 
-A simple DXF creator for PHP
+A simple DXF creator for PHP.
+This code is the upgrade of [DXF-Writer](http://www.phpclasses.org/package/7954-PHP-Generate-CAD-files-in-the-AutoCAD-DXF-format.html).
 
-#Example
+##Example
 
 ```
 $dxf = new Creator();
@@ -29,3 +30,19 @@ $dxf->addText(26, 46, 0, 'DXF testing', 8)
 ```
 
 See "demo" directory of project
+
+##Install by Composer
+
+```
+composer require adamasantares/dxf "0.1.0a"
+```
+
+or
+
+```
+"require": {
+      "adamasantares/dxf": "0.1.0a"
+  }
+```
+
+EOF
