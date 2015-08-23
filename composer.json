@@ -1,0 +1,22 @@
+{
+	"name": "adamasantares/dxf",
+	"description": "A simple DXF creator for PHP",
+	"keywords": ["php", "dxf"],
+	"homepage": "https://github.com/adamasantares/DXF-Creator-for-PHP#readme",
+	"type": "library",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Konstantin Kutsevalov",
+			"email": "konstantin@kutsevalov.name"
+		}
+	],
+	"require": {
+		"php": ">=5.4.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"adamasantares\\dxf\\": ""
+		}
+	}
+}

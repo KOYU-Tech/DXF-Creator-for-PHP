@@ -1,10 +1,16 @@
-# DXF-Creator-for-PHP
+<?php
+/**
+ * Demo drawing #1
+ */
 
-A simple DXF creator for PHP
+require dirname(__FILE__) . '/../Color.php';
+require dirname(__FILE__) . '/../LineType.php';
+require dirname(__FILE__) . '/../Creator.php';
 
-#Example
+use adamasantares\dxf\Creator;
+use adamasantares\dxf\Color;
+use adamasantares\dxf\LineType;
 
-```
 $dxf = new Creator();
 $dxf->addText(26, 46, 0, 'DXF testing', 8)
     ->setLayer('cyan', Color::CYAN)
@@ -25,7 +31,6 @@ $dxf->addText(26, 46, 0, 'DXF testing', 8)
     ->addPoint(0, 100, 0)
     ->addPoint(100, 100, 0)
     ->addPoint(100, 0, 0)
-    ->saveToFile('demo.dxf');
-```
+    ->saveToFile(dirname(__FILE__) . '/demo1.dxf');
 
-See "demo" directory of project
+exit("   Done (" . dirname(__FILE__) . "/demo1.dxf)\n");
