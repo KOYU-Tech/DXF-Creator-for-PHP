@@ -281,12 +281,15 @@ class Creator {
      * @param float $z
      * @param string $text
      * @param float $textHeight Text height
+     * @param integer $position Position of text from point: 1 = top-left; 2 = top-center; 3 = top-right; 4 = center-left; 5 = center; 6 = center-right; 7 = bottom-left; 8 = bottom-center; 9 = bottom-right
+     * @param float $angle Angle of text in degrees (rotation)
      * @return Creator Instance
      * @see http://www.autodesk.com/techpubs/autocad/acad2000/dxf/text_dxf_06.htm
      */
-    public function addText($x, $y, $z, $text, $textHeight)
+    public function addText($x, $y, $z, $text, $textHeight, $position = 7, $angle = 0)
     {
-        $this->shapes[] = "TEXT\n8\n{$this->layerName}\n 10\n{$x}\n 20\n{$y}\n 30\n{$z}\n 40\n{$textHeight}\n  1\n{$text}\n  0\n";
+        $angle = deg2rad($angle);
+        $this->shapes[] = "TEXT\n8\n{$this->layerName}\n10\n{$x}\n20\n{$y}\n30\n{$z}\n40\n{$textHeight}\n71\n{$position}\n1\n{$text}\n50\n{$angle}\n0\n";
         return $this;
     }
 
