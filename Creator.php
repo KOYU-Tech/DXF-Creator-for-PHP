@@ -10,6 +10,7 @@
  * @since 2015/08
  *
  * @see http://www.autodesk.com/techpubs/autocad/acad2000/dxf/
+ * @see (RU) http://help.autodesk.com/view/ACD/2015/RUS/?guid=GUID-235B22E0-A567-4CF6-92D3-38A2306D73F3
  *
  * @example <code>
  *     $dxf = new \adamasantares\dxf\Creator();
@@ -65,6 +66,11 @@ class Creator {
      * @var array Shapes collection
      */
     private $shapes = [];
+
+    /**
+     * @var array Center offser
+     */
+    private $offset = [0, 0, 0];
 
 
     /**
@@ -175,6 +181,28 @@ class Creator {
 
 
     /**
+     * Set offset
+     * @param $x
+     * @param $y
+     * @param $z
+     */
+    public function setOffset($x, $y, $z = 0)
+    {
+        $this->offset = [$x, $y, $z];
+    }
+
+
+    /**
+     * Get offset
+     * @return array
+     */
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+
+    /**
      * Add new layer to document
      * @param string $name
      * @param int $color Color code (@see adamasantares\dxf\Color class)
@@ -251,6 +279,9 @@ class Creator {
      */
     public function addPoint($x, $y, $z)
     {
+        $x += $this->offset[0];
+        $y += $this->offset[1];
+        $z += $this->offset[2];
         $this->shapes[] = "POINT\n8\n{$this->layerName}\n100\nAcDbPoint\n10\n{$x}\n20\n{$y}\n30\n{$z}\n0\n";
         return $this;
     }
@@ -269,6 +300,12 @@ class Creator {
      */
     public function addLine($x, $y, $z, $x2, $y2, $z2)
     {
+        $x += $this->offset[0];
+        $y += $this->offset[1];
+        $z += $this->offset[2];
+        $x2 += $this->offset[0];
+        $y2 += $this->offset[1];
+        $z2 += $this->offset[2];
         $this->shapes[] = "LINE\n8\n{$this->layerName}\n10\n{$x}\n20\n{$y}\n30\n{$z}\n11\n{$x2}\n21\n{$y2}\n31\n{$z2}\n0\n";
         return $this;
     }
@@ -288,6 +325,9 @@ class Creator {
      */
     public function addText($x, $y, $z, $text, $textHeight, $position = 7, $angle = 0)
     {
+        $x += $this->offset[0];
+        $y += $this->offset[1];
+        $z += $this->offset[2];
         $angle = deg2rad($angle);
         $this->shapes[] = "TEXT\n8\n{$this->layerName}\n10\n{$x}\n20\n{$y}\n30\n{$z}\n40\n{$textHeight}\n71\n{$position}\n1\n{$text}\n50\n{$angle}\n0\n";
         return $this;
@@ -305,6 +345,9 @@ class Creator {
      */
     public function addCircle($x, $y, $z, $radius)
     {
+        $x += $this->offset[0];
+        $y += $this->offset[1];
+        $z += $this->offset[2];
         $this->shapes[] = "CIRCLE\n8\n{$this->layerName}\n10\n{$x}\n20\n{$y}\n30\n{$z}\n40\n{$radius}\n0\n";
         return $this;
     }
@@ -324,24 +367,12 @@ class Creator {
      */
     public function addArc($x, $y, $z, $radius, $startAngle = 0.1, $endAngle = 90.0)
     {
+        $x += $this->offset[0];
+        $y += $this->offset[1];
+        $z += $this->offset[2];
         $this->shapes[] = "ARC\n8\n{$this->layerName}\n10\n{$x}\n20\n{$y}\n30\n{$z}\n40\n{$radius}\n50\n{$startAngle}\n51\n{$endAngle}\n0\n";
         return $this;
     }
-
-
-    /**
-     * Add Ellipse to current layer.
-     *
-     * @return $this
-     * @see http://www.autodesk.com/techpubs/autocad/acad2000/dxf/ellipse_dxf_06.htm
-     */
-    // TODO todo...
-//    public function addEllipse(/* ... */)
-//    {
-//
-//        return $this;
-//    }
-
 
     /**
      * Add 2D polyline to current layer.
@@ -356,6 +387,8 @@ class Creator {
             $dots = "90\n" . ($count / 2 + 1) . "\n";
             $polyline = "LWPOLYLINE\n8\n{$this->layerName}\n{$dots}";
             for ($i=0; $i<$count; $i+=2) {
+                $points[$i] += $this->offset[0];
+                $points[$i+1] += $this->offset[1];
                 $polyline .= "10\n{$points[$i]}\n20\n{$points[$i+1]}\n30\n0\n";
             }
             $this->shapes[] = $polyline . "  0\n";
