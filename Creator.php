@@ -13,7 +13,7 @@
  * @see (RU) http://help.autodesk.com/view/ACD/2015/RUS/?guid=GUID-235B22E0-A567-4CF6-92D3-38A2306D73F3
  *
  * @example <code>
- *     $dxf = new \adamasantares\dxf\Creator();
+ *     $dxf = new \adamasantares\dxf\Creator( \adamasantares\dxf\Creator::INCHES );
  *     $dxf->addText(26, 46, 0, 'DXF testing', 8)
  *     ->setLayer('cyan', $color::CYAN)
  *     ->addLine(25, 0, 0, 100, 0, 0)
@@ -46,6 +46,29 @@ namespace adamasantares\dxf;
  */
 class Creator {
 
+    // units codes
+    const UNITLESS = 0;
+    const INCHES = 1;
+    const FEET = 2;
+    const MILES = 3;
+    const MILLIMETERS = 4;
+    const CENTIMETERS = 5;
+    const METERS = 6;
+    const KILOMETERS = 7;
+    const MICROINCHES = 8;
+    const MILS = 9;
+    const YARDS = 10;
+    const ANGSTROMS = 11;
+    const NANOMETERS = 12;
+    const MICRONS = 13;
+    const DECIMETERS = 14;
+    const DECAMETERS = 15;
+    const HECTOMETERS = 16;
+    const GIGAMETERS = 17;
+    const ASTRONOMICAL_UNITS = 18;
+    const LIGHT_YEARS = 19;
+    const PARSECS = 20;
+
     /**
      * @var null Last error description
      */
@@ -72,12 +95,18 @@ class Creator {
      */
     private $offset = [0, 0, 0];
 
+    /**
+     * @var int Units
+     */
+    private $units = 1;
+
 
     /**
      * Create new DXF document
      */
-    function __construct()
+    function __construct($units)
     {
+        $this->units = $units;
         // add default layout
         $this->addLayer($this->layerName);
     }
@@ -133,7 +162,7 @@ class Creator {
      * @return string
      */
     private function getHeaderString() {
-        $str = "0\nSECTION\n  2\nHEADER\n  9\n\$ACADVER\n  1\nAC1006\n  0\nENDSEC\n  0\n";
+        $str = "0\nSECTION\n2\nHEADER\n9\n\$ACADVER\n1\nAC1006\n9\n$"."INSUNITS\n70\n{$this->units}\n0\nENDSEC\n0\n";
         //layers
         $str .= "SECTION\n  2\nTABLES\n  0\nTABLE\n2\n";
         $str .= $this->getLayersString();
@@ -373,6 +402,21 @@ class Creator {
         $this->shapes[] = "ARC\n8\n{$this->layerName}\n10\n{$x}\n20\n{$y}\n30\n{$z}\n40\n{$radius}\n50\n{$startAngle}\n51\n{$endAngle}\n0\n";
         return $this;
     }
+
+
+    /**
+     * Add Ellipse to current layer.
+     *
+     * @return $this
+     * @see http://www.autodesk.com/techpubs/autocad/acad2000/dxf/ellipse_dxf_06.htm
+     */
+    // TODO todo...
+//    public function addEllipse(/* ... */)
+//    {
+//
+//        return $this;
+//    }
+
 
     /**
      * Add 2D polyline to current layer.
