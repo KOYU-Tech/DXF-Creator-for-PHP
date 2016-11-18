@@ -21,11 +21,6 @@ namespace adamasantares\dxf;
  */
 class Color {
 
-    /**
-     * Default layer's color
-     */
-    const LAYER = 0;
-
     const RED = 1;
 
     const YELLOW = 2;
