@@ -8,12 +8,12 @@ This code is the upgrade of [DXF-Writer](http://www.phpclasses.org/package/7954-
 ```
 $dxf = new Creator();
 $dxf->addText(26, 46, 0, 'DXF testing', 8)
-    ->setLayer('cyan', Color::CYAN)
+    ->setColor(Color::CYAN) // change color of default layer
     ->addLine(25, 0, 0, 100, 0, 0)
     ->addLine(100, 0, 0, 100, 75, 0)
     ->addLine(75, 100, 0, 0, 100, 0)
     ->addLine(0, 100, 0, 0, 25, 0)
-    ->setLayer('blue', Color::BLUE, LineType::DASHDOT)
+    ->setLayer('blue', Color::BLUE, LineType::DASHDOT) // create new layer
     ->addCircle(0, 0, 0, 25)
     ->setLayer('custom', Color::rgb(10, 145, 230), LineType::DASHED)
     ->addCircle(100, 100, 0, 25)
