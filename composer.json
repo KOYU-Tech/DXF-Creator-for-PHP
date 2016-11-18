@@ -2,7 +2,7 @@
 	"name": "adamasantares/dxf",
 	"description": "A simple DXF creator for PHP",
 	"keywords": ["php", "dxf"],
-	"homepage": "https://github.com/adamasantares/DXF-Creator-for-PHP#readme",
+	"homepage": "https://github.com/art-programming-team/DXF-Creator-for-PHP#readme",
 	"type": "library",
 	"license": "MIT",
 	"authors": [
