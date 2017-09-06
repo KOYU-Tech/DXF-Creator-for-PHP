@@ -6,7 +6,7 @@
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License
  *
  * Upgrade script to "Creator"
- * @author Konstantin Kutsevalov <mail@art-prog.ru>
+ * @author Konstantin Kutsevalov <adamasantares@gmail.com>
  * @since 2015/08
  *
  * @see http://www.autodesk.com/techpubs/autocad/acad2000/dxf/
