@@ -102,9 +102,10 @@ class Creator {
 
 
     /**
+     * @param int $units (MILLIMETERS as default value)
      * Create new DXF document
      */
-    function __construct($units)
+    function __construct($units = self::MILLIMETERS)
     {
         $this->units = $units;
         // add default layout
