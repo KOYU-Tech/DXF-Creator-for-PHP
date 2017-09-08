@@ -6,7 +6,7 @@ This code is the upgrade of [DXF-Writer](http://www.phpclasses.org/package/7954-
 ##Example
 
 ```
-$dxf = new Creator();
+$dxf = new Creator(Creator::MILLIMETERS);
 $dxf->addText(26, 46, 0, 'DXF testing', 8)
     ->setColor(Color::CYAN) // change color of default layer
     ->addLine(25, 0, 0, 100, 0, 0)
@@ -34,14 +34,14 @@ See "demo" directory of project
 ##Install by Composer
 
 ```
-composer require adamasantares/dxf "0.1.31"
+composer require adamasantares/dxf "0.1.32"
 ```
 
 or
 
 ```
 "require": {
-      "adamasantares/dxf": "0.1.31"
+      "adamasantares/dxf": "0.1.32"
   }
 ```
 
