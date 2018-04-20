@@ -364,7 +364,7 @@ class Creator {
         $horizontalJustification = ($position - 1) % 3;
         $verticalJustification = 3 - intval(($position -1) / 3);
         
-        $this->shapes[] = "TEXT\n8\n{$this->layerName}\n10\n{$x}\n20\n{$y}\n30\n{$z}\n40\n{$textHeight}\n72\n{$horizontalJustification}\n73\n{$verticalJustification}\n1\n{$text}\n50\n{$angle}\n0\n";
+        $this->shapes[] = "TEXT\n8\n{$this->layerName}\n10\n{$x}\n20\n{$y}\n30\n{$z}\n11\n{$x}\n21\n{$y}\n31\n{$z}\n40\n{$textHeight}\n72\n{$horizontalJustification}\n73\n{$verticalJustification}\n1\n{$text}\n50\n{$angle}\n0\n";
         return $this;
     }
 
