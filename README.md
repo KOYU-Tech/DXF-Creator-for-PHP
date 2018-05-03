@@ -34,14 +34,14 @@ See "demo" directory of project
 ##Install by Composer
 
 ```
-composer require adamasantares/dxf "0.1.32"
+composer require adamasantares/dxf "0.1.33"
 ```
 
 or
 
 ```
 "require": {
-      "adamasantares/dxf": "0.1.32"
+      "adamasantares/dxf": "0.1.33"
   }
 ```
 
