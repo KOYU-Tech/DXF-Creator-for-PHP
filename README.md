@@ -53,14 +53,14 @@ See "demo" directory of project.
 ## Install by Composer
 
 ```
-composer require adamasantares/dxf "0.1.33"
+composer require adamasantares/dxf "0.1.35"
 ```
 
 or
 
 ```
 "require": {
-      "adamasantares/dxf": "0.1.33"
+      "adamasantares/dxf": "0.1.35"
   }
 ```
 
