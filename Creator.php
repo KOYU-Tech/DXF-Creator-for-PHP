@@ -312,7 +312,7 @@ class Creator {
         $x += $this->offset[0];
         $y += $this->offset[1];
         $z += $this->offset[2];
-        $this->shapes[] = "POINT\n8\n{$this->layerName}\n100\nAcDbPoint\n10\n{$x}\n20\n{$y}\n30\n{$z}\n0\n";
+        $this->shapes[] = "POINT\n  8\n{$this->layerName}\n100\nAcDbPoint\n10\n{$x}\n20\n{$y}\n30\n{$z}\n  0\n";
         return $this;
     }
 
@@ -336,7 +336,7 @@ class Creator {
         $x2 += $this->offset[0];
         $y2 += $this->offset[1];
         $z2 += $this->offset[2];
-        $this->shapes[] = "LINE\n8\n{$this->layerName}\n10\n{$x}\n20\n{$y}\n30\n{$z}\n11\n{$x2}\n21\n{$y2}\n31\n{$z2}\n0\n";
+        $this->shapes[] = "LINE\n8\n{$this->layerName}\n10\n{$x}\n20\n{$y}\n30\n{$z}\n11\n{$x2}\n21\n{$y2}\n31\n{$z2}\n  0\n";
         return $this;
     }
 
@@ -364,7 +364,7 @@ class Creator {
         $horizontalJustification = ($position - 1) % 3;
         $verticalJustification = 3 - intval(($position -1) / 3);
         
-        $this->shapes[] = "TEXT\n8\n{$this->layerName}\n10\n{$x}\n20\n{$y}\n30\n{$z}\n11\n{$x}\n21\n{$y}\n31\n{$z}\n40\n{$textHeight}\n72\n{$horizontalJustification}\n73\n{$verticalJustification}\n1\n{$text}\n50\n{$angle}\n0\n";
+        $this->shapes[] = "TEXT\n8\n{$this->layerName}\n10\n{$x}\n20\n{$y}\n30\n{$z}\n11\n{$x}\n21\n{$y}\n31\n{$z}\n40\n{$textHeight}\n72\n{$horizontalJustification}\n73\n{$verticalJustification}\n1\n{$text}\n50\n{$angle}\n  0\n";
         return $this;
     }
 
@@ -405,23 +405,63 @@ class Creator {
         $x += $this->offset[0];
         $y += $this->offset[1];
         $z += $this->offset[2];
-        $this->shapes[] = "ARC\n8\n{$this->layerName}\n10\n{$x}\n20\n{$y}\n30\n{$z}\n40\n{$radius}\n50\n{$startAngle}\n51\n{$endAngle}\n0\n";
+        $this->shapes[] = "ARC\n8\n{$this->layerName}\n10\n{$x}\n20\n{$y}\n30\n{$z}\n40\n{$radius}\n50\n{$startAngle}\n51\n{$endAngle}\n  0\n";
         return $this;
     }
 
 
     /**
      * Add Ellipse to current layer.
+     * @param float $cx Center Point X
+     * @param float $cy Center Point Y
+     * @param float $cz Center Point Z
+     * @param float $mx Major Axis Endpoint X
+     * @param float $my Major Axis Endpoint Y
+     * @param float $mz Major Axis Endpoint Z
+     * @param float $ratio Ratio of minor axis to major axis
+     * @return $this
+     * @see https://raw.githubusercontent.com/active-programming/DXF-Creator-for-PHP/master/demo/ellipse2.png
+     * @see https://www.autodesk.com/techpubs/autocad/acad2000/dxf/index.htm
+     */
+    public function addEllipse($cx, $cy, $cz, $mx, $my, $mz, $ratio=0.5, $start = 0, $end = 6.283185307179586)
+    {
+        $mx -= $cx;
+        $my -= $cy;
+        $mz -= $cz;
+        $this->shapes[] = "ELLIPSE\n  5\n4D\n100\nAcDbEntity\n  8\n{$this->layerName}\n  6\nByLayer\n 62\n  256\n370\n   -1\n100\nAcDbEllipse\n"
+            . " 10\n{$cx}\n 20\n{$cy}\n 30\n{$cz}\n 11\n{$mx}\n 21\n{$my}\n 31\n{$mz}\n 40\n{$ratio}\n 41\n{$start}\n 42\n{$end}\n  0\n";
+        return $this;
+    }
+
+
+    /**
+     * Add Ellipse to current layer.
+     * @param float $cx Center Point X
+     * @param float $cy Center Point Y
+     * @param float $cz Center Point Z
+     * @param float $mx Major Axis Endpoint X
+     * @param float $my Major Axis Endpoint Y
+     * @param float $mz Major Axis Endpoint Z
+     * @param float $rx Minor Axis Endpoint X
+     * @param float $ry Minor Axis Endpoint Y
+     * @param float $rz Minor Axis Endpoint Z
      *
      * @return $this
-     * @see http://www.autodesk.com/techpubs/autocad/acad2000/dxf/ellipse_dxf_06.htm
+     * @see https://raw.githubusercontent.com/active-programming/DXF-Creator-for-PHP/master/demo/ellipse.png
+     * @see https://www.autodesk.com/techpubs/autocad/acad2000/dxf/index.htm
      */
-    // TODO todo...
-//    public function addEllipse(/* ... */)
-//    {
-//
-//        return $this;
-//    }
+    public function addEllipseBy3Points($cx, $cy, $cz, $mx, $my, $mz, $rx, $ry, $rz, $start = 0, $end = 6.283185307179586)
+    {
+        $length1 = sqrt(pow($cx - $mx, 2) + pow($cy - $my, 2) + pow($cz - $mz, 2));
+        $length2 = sqrt(pow($cx - $rx, 2) + pow($cy - $ry, 2) + pow($cz - $rz, 2));
+        $ratio = round($length2 / $length1, 3);
+        $mx -= $cx;
+        $my -= $cy;
+        $mz -= $cz;
+        $this->shapes[] = "ELLIPSE\n  5\n4D\n100\nAcDbEntity\n  8\n{$this->layerName}\n  6\nByLayer\n 62\n  256\n370\n   -1\n100\nAcDbEllipse\n"
+            . " 10\n{$cx}\n 20\n{$cy}\n 30\n{$cz}\n 11\n{$mx}\n 21\n{$my}\n 31\n{$mz}\n 40\n{$ratio}\n 41\n{$start}\n 42\n{$end}\n  0\n";
+        return $this;
+    }
 
 
     /**

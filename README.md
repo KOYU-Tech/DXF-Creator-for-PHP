@@ -3,7 +3,9 @@
 A simple DXF creator for PHP.
 This code is the upgrade of [DXF-Writer](http://www.phpclasses.org/package/7954-PHP-Generate-CAD-files-in-the-AutoCAD-DXF-format.html).
 
-##Example
+##Examples
+
+Miscellaneous:
 
 ```
 $dxf = new Creator(Creator::MILLIMETERS);
@@ -29,7 +31,24 @@ $dxf->addText(26, 46, 0, 'DXF testing', 8)
     ->saveToFile('demo.dxf');
 ```
 
-See "demo" directory of project
+Result:
+
+<img src="https://raw.githubusercontent.com/active-programming/DXF-Creator-for-PHP/master/demo/misc.png" alt="" />
+
+Ellipse:
+
+```
+$dxf = new Creator(Creator::MILLIMETERS);
+$dxf->setColor(Color::rgb(0, 100, 0))
+    ->addEllipse(-20, 0, 0, -20, 30, 0, 0.5)
+    ->setLayer('2', Color::MAGENTA, LineType::SOLID)
+    ->addEllipseBy3Points(20, 0, 0, 20, 30, 0, 35, 0, 0)
+    ->saveToFile(dirname(__FILE__) . '/demo3.dxf');
+```
+
+<img src="https://raw.githubusercontent.com/active-programming/DXF-Creator-for-PHP/master/demo/ellipse3.png" alt="" />
+
+See "demo" directory of project.
 
 ##Install by Composer
 
