@@ -163,7 +163,7 @@ class Creator {
      * @return string
      */
     private function getHeaderString() {
-        $str = "0\nSECTION\n2\nHEADER\n9\n\$ACADVER\n1\nAC1009\n9\n$"."INSUNITS\n70\n{$this->units}\n0\nENDSEC\n0\n";
+        $str = "0\nSECTION\n2\nHEADER\n9\n\$ACADVER\n1\nAC1012\n9\n$"."INSUNITS\n70\n{$this->units}\n0\nENDSEC\n0\n";
         //layers
         $str .= "SECTION\n  2\nTABLES\n  0\nTABLE\n2\n";
         $str .= $this->getLayersString();
