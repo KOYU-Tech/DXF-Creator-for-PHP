@@ -686,7 +686,7 @@ class Creator {
         $template = file_get_contents(__DIR__ . '/template.dxf');
         $lTypes = $this->getLtypesString();
         $layers = $this->getLayersString();
-        $entities = implode('', $this->shapes);
+        $entities = $this->getEntities();
         $dxf = str_replace([
             '{LTYPES_TABLE}',
             '{LAYERS_TABLE}',
@@ -697,6 +697,13 @@ class Creator {
             $entities
         ], $template);
         return  $dxf;
+    }
+
+
+    private function getEntities()
+    {
+        $entities = implode('', $this->shapes);
+        return rtrim($entities, "\n");
     }
 
 
@@ -711,7 +718,7 @@ class Creator {
         foreach ($this->lTypes as $name) {
             $lTypes .= LineType::getString($name);
         }
-        return $lTypes;
+        return rtrim($lTypes, "\n");
     }
 
 
@@ -741,7 +748,7 @@ class Creator {
                     "0\n";
             }
         }
-        return $layers;
+        return rtrim($layers, "\n");
     }
 
 

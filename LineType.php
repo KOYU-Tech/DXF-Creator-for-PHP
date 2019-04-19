@@ -97,7 +97,6 @@ class LineType {
                 "0\n" .
                 "40\n" . // Total pattern length
                 "0.0\n" .
-                "0\n" .
                 "0\n";
     }
 
