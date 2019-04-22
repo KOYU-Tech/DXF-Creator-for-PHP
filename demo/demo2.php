@@ -16,7 +16,7 @@ use adamasantares\dxf\LineType;
     ->setLineType(LineType::DASHDOTX2)
     ->addCircle(0, 0, 0, 33)
     ->setLayer('poly', Color::MAGENTA, LineType::SOLID)
-    ->addPolyline2d([
+    ->addPolyline([
         100, 100,
         100, 50,
         50, 50,

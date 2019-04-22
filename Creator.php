@@ -111,7 +111,7 @@ class Creator {
      * HANDSEED must be larger than the largest handle in the drawing or DXF file.
      * @see https://forums.autodesk.com/t5/autocad-2000-2000i-2002-archive/what-is-the-handle-in-a-dxf-entity/td-p/118936
      */
-    private $handleNumber = 1;
+    private $handleNumber = 0xff;
 
 
     /**
@@ -211,13 +211,14 @@ class Creator {
      */
     public function addPoint($x, $y, $z)
     {
-        $number = $this->getEntityHandle();
         $x += $this->offset[0];
         $y += $this->offset[1];
         $z += $this->offset[2];
         $this->shapes[] = "POINT\n" .
             "5\n" . // Entity Handle
-            "{$number}\n" .
+            "{number}\n" .
+            "100\n" . // Subclass marker (AcDbEntity)
+            "AcDbEntity\n" .
             "8\n" . // Layer name
             "{$this->layerName}\n" .
             "100\n" . // Subclass marker (AcDbPoint)
@@ -246,7 +247,6 @@ class Creator {
      */
     public function addLine($x, $y, $z, $x2, $y2, $z2)
     {
-        $number = $this->getEntityHandle();
         $x += $this->offset[0];
         $y += $this->offset[1];
         $z += $this->offset[2];
@@ -255,7 +255,9 @@ class Creator {
         $z2 += $this->offset[2];
         $this->shapes[] = "LINE\n" .
             "5\n" . // Entity Handle
-            "{$number}\n" .
+            "{number}\n" .
+            "100\n" . // Subclass marker (AcDbEntity)
+            "AcDbEntity\n" .
             "8\n" . // Layer name
             "{$this->layerName}\n" .
             "100\n" .
@@ -293,7 +295,6 @@ class Creator {
      */
     public function addText($x, $y, $z, $text, $textHeight, $position = 7, $angle = 0.0, $thickness = 0)
     {
-        $number = $this->getEntityHandle();
         $x += $this->offset[0];
         $y += $this->offset[1];
         $z += $this->offset[2];
@@ -302,7 +303,9 @@ class Creator {
         $verticalJustification = 3 - intval(($position -1) / 3);
         $this->shapes[] = "TEXT\n" .
             "5\n" . // Entity Handle
-            "{$number}\n" .
+            "{number}\n" .
+            "100\n" . // Subclass marker (AcDbEntity)
+            "AcDbEntity\n" .
             "8\n" . // Layer name
             "{$this->layerName}\n" .
             "100\n" . // Subclass marker (AcDbText)
@@ -315,22 +318,32 @@ class Creator {
             "{$y}\n" .
             "30\n" . // First alignment point, Z value
             "{$z}\n" .
+            "40\n" . // Text height
+            "{$textHeight}\n" .
+            "1\n" . // Default value (the string itself)
+            "{$text}\n" .
+            "50\n" . // Text rotation (optional; default = 0)
+            "{$angle}\n" .
+            "41\n" . // Relative X scale factor—width (optional; default = 1)
+            "1\n" .
+            "51\n" . // Oblique angle (optional; default = 0)
+            "0\n" .
+            "7\n" . // Text style name (optional, default = STANDARD)
+            "STANDARD\n" .
+            "71\n" . // Text generation flags (optional, default = 0)
+            "0\n" .
+            "72\n" . // Horizontal text justification type (optional, default = 0) integer codes (not bit-coded): 0 = Left, 1= Center, 2 = Right, 3 = Aligned, 4 = Middle, 5 = Fit
+            "{$horizontalJustification}\n" .
             "11\n" . // Second alignment point, X value
             "{$x}\n" .
             "21\n" . // Second alignment point, Y value
             "{$y}\n" .
             "31\n" . // Second alignment point, Z value
             "{$z}\n" .
-            "1\n" . // Default value (the string itself)
-            "{$text}\n" .
-            "40\n" . // Text height
-            "{$textHeight}\n" .
-            "72\n" . // Horizontal text justification type (optional, default = 0) integer codes (not bit-coded): 0 = Left, 1= Center, 2 = Right, 3 = Aligned, 4 = Middle, 5 = Fit
-            "{$horizontalJustification}\n" .
+            "100\n" . // Subclass marker (AcDbText)
+            "AcDbText\n" .
             "73\n" . // Vertical text justification type (optional, default = 0): integer codes (not bit-coded): 0 = Baseline, 1 = Bottom, 2 = Middle, 3 = Top
             "{$verticalJustification}\n" .
-            "50\n" . // Text rotation (optional; default = 0)
-            "{$angle}\n" .
             "0\n";
         return $this;
     }
@@ -344,17 +357,17 @@ class Creator {
      * @param float $radius
      * @return Creator Instance
      * @see https://knowledge.autodesk.com/search-result/caas/CloudHelp/cloudhelp/2018/ENU/AutoCAD-DXF/files/GUID-8663262B-222C-414D-B133-4A8506A27C18-htm.html
-     * @see http://www.autodesk.com/techpubs/autocad/acad2000/dxf/circle_dxf_06.htm
      */
     public function addCircle($x, $y, $z, $radius)
     {
-        $number = $this->getEntityHandle();
         $x += $this->offset[0];
         $y += $this->offset[1];
         $z += $this->offset[2];
         $this->shapes[] = "CIRCLE\n" .
             "5\n" . // Entity Handle
-            "{$number}\n" .
+            "{number}\n" .
+            "100\n" . // Subclass marker (AcDbEntity)
+            "AcDbEntity\n" .
             "8\n" . // Layer name
             "{$this->layerName}\n" .
             "100\n" . // Subclass marker (AcDbCircle)
@@ -386,17 +399,20 @@ class Creator {
      */
     public function addArc($x, $y, $z, $radius, $startAngle = 0.1, $endAngle = 90.0)
     {
-        $number = $this->getEntityHandle();
         $x += $this->offset[0];
         $y += $this->offset[1];
         $z += $this->offset[2];
         $this->shapes[] = "ARC\n" .
             "5\n" . // Entity Handle
-            "{$number}\n" .
+            "{number}\n" .
+            "100\n" . // Subclass marker (AcDbEntity)
+            "AcDbEntity\n" .
             "8\n" . // Layer name
             "{$this->layerName}\n" .
             "100\n" . // Subclass marker (AcDbCircle)
             "AcDbCircle\n" .
+            "39\n" . // Thickness (optional; default = 0)
+            "0\n" .
             "10\n" . // Center point, X value
             "{$x}\n" .
             "20\n" . // Center point, Y value
@@ -405,6 +421,8 @@ class Creator {
             "{$z}\n" .
             "40\n" . // Radius
             "{$radius}\n" .
+            "100\n" . // Subclass marker (AcDbArc)
+            "AcDbArc\n" .
             "50\n" . // Start angle
             "{$startAngle}\n" .
             "51\n" . // End angle
@@ -426,20 +444,20 @@ class Creator {
      * @return $this
      * @see https://raw.githubusercontent.com/active-programming/DXF-Creator-for-PHP/master/demo/ellipse2.png
      * @see https://www.autodesk.com/techpubs/autocad/acad2000/dxf/index.htm
+     * @see https://knowledge.autodesk.com/search-result/caas/CloudHelp/cloudhelp/2016/ENU/AutoCAD-DXF/files/GUID-107CB04F-AD4D-4D2F-8EC9-AC90888063AB-htm.html
      */
     public function addEllipse($cx, $cy, $cz, $mx, $my, $mz, $ratio=0.5, $start = 0, $end = 6.283185307179586)
     {
-        $number = $this->getEntityHandle();
         $mx -= $cx;
         $my -= $cy;
         $mz -= $cz;
         $this->shapes[] = "ELLIPSE\n" .
             "5\n" . // Entity Handle
-            "{$number}\n" .
-            "8\n" . // Layer name
-            "{$this->layerName}\n" .
+            "{number}\n" .
             "100\n" . // Subclass marker (AcDbEntity)
             "AcDbEntity\n" .
+            "8\n" . // Layer name
+            "{$this->layerName}\n" .
             "100\n" . // Subclass marker (AcDbEllipse)
             "AcDbEllipse\n" .
             "10\n" . // Center point, X value
@@ -483,7 +501,6 @@ class Creator {
      */
     public function addEllipseBy3Points($cx, $cy, $cz, $mx, $my, $mz, $rx, $ry, $rz, $start = 0, $end = 6.283185307179586)
     {
-        $number = $this->getEntityHandle();
         $length1 = sqrt(pow($cx - $mx, 2) + pow($cy - $my, 2) + pow($cz - $mz, 2));
         $length2 = sqrt(pow($cx - $rx, 2) + pow($cy - $ry, 2) + pow($cz - $rz, 2));
         $ratio = round($length2 / $length1, 3);
@@ -492,11 +509,11 @@ class Creator {
         $mz -= $cz;
         $this->shapes[] = "ELLIPSE\n" .
             "5\n" . // Entity Handle
-            "{$number}\n" .
-            "8\n" . // Layer name
-            "{$this->layerName}\n" .
+            "{number}\n" .
             "100\n" . // Subclass marker (AcDbEntity)
             "AcDbEntity\n" .
+            "8\n" . // Layer name
+            "{$this->layerName}\n" .
             "100\n" . // Subclass marker (AcDbEllipse)
             "AcDbEllipse\n" .
             "10\n" . // Center point, X value
@@ -523,30 +540,36 @@ class Creator {
 
 
     /**
-     * Add 2D polyline to current layer.
+     * Add polyline to current layer.
      * @param array[float] $points Points array: [x, y, x2, y2, x3, y3, ...]
+     * @param int $flag Polyline flag (bit-coded); default is 0: 1 = Closed; 128 = Plinegen
      * @return $this
      * @see https://knowledge.autodesk.com/search-result/caas/CloudHelp/cloudhelp/2017/ENU/AutoCAD-DXF/files/GUID-748FC305-F3F2-4F74-825A-61F04D757A50-htm.html
      */
-    public function addPolyline2d($points)
+    public function addPolyline($points, $flag = 0)
     {
-        $number = $this->getEntityHandle();
         $count = count($points);
         if ($count > 2 && ($count % 2) == 0) {
             $dots = ($count / 2 + 1);
             $polyline = "LWPOLYLINE\n" .
                 "5\n" . // Entity Handle
-                "{$number}\n" .
-                "8\n" . // Layer name
-                "{$this->layerName}\n" .
+                "{number}\n" .
                 "100\n" . // Subclass marker (AcDbEntity)
                 "AcDbEntity\n" .
+                "8\n" . // Layer name
+                "{$this->layerName}\n" .
                 "100\n" . // Subclass marker (AcDbPolyline)
                 "AcDbPolyline\n" .
-                "70\n" . // Polyline flag (bit-coded); default is 0: 1 = Closed; 128 = Plinegen
-                "0\n" .
                 "90\n" . // Number of vertices
-                "{$dots}\n";
+                "{$dots}\n" .
+                "70\n" . // Polyline flag (bit-coded); default is 0: 1 = Closed; 128 = Plinegen
+                "{$flag}\n" .
+                "43\n" . // Constant width (optional; default = 0).
+                "0\n" .
+                "38\n" . // Elevation (optional; default = 0)
+                "0\n" .
+                "39\n" . // Thickness (optional; default = 0)
+                "0\n";
             for ($i = 0; $i < $count; $i += 2) {
                 $x = $points[$i] + $this->offset[0];
                 $y = $points[$i+1] + $this->offset[1];
@@ -554,9 +577,7 @@ class Creator {
                     "10\n" .
                     "{$x}\n" .
                     "20\n" .
-                    "{$y}\n" .
-                    "30\n" .
-                    "0\n";
+                    "{$y}\n";
             }
             $this->shapes[] = $polyline . "0\n";
         }
@@ -569,41 +590,11 @@ class Creator {
      * @param array[float] $points Points array: [x, y, z, x2, y2, z2, x3, y3, z3, ...]
      * @return $this
      * @see https://knowledge.autodesk.com/search-result/caas/CloudHelp/cloudhelp/2017/ENU/AutoCAD-DXF/files/GUID-748FC305-F3F2-4F74-825A-61F04D757A50-htm.html
+     * @deprecated It was mistake, the polyline has no Z coordinate point (code 30)
      */
-    public function addPolyline($points)
+    public function addPolyline2d($points)
     {
-        $number = $this->getEntityHandle();
-        $count = count($points);
-        if ($count > 3 && ($count % 3) == 0) {
-            $dots = ($count / 3 + 1);
-            $polyline = "LWPOLYLINE\n" .
-                "5\n" . // Entity Handle
-                "{$number}\n" .
-                "8\n" .
-                "{$this->layerName}\n" .
-                "100\n" . // Subclass marker (AcDbEntity)
-                "AcDbEntity\n" .
-                "100\n" . // Subclass marker (AcDbPolyline)
-                "AcDbPolyline\n" .
-                "70\n" . // Polyline flag (bit-coded); default is 0: 1 = Closed; 128 = Plinegen
-                "0\n" .
-                "90\n" .
-                "{$dots}\n";
-            for ($i = 0; $i < $count; $i += 3) {
-                $x = $points[$i] + $this->offset[0];
-                $y = $points[$i+1] + $this->offset[1];
-                $z = $points[$i+2] + $this->offset[2];
-                $polyline .=
-                    "10\n" .
-                    "{$x}\n" .
-                    "20\n" .
-                    "{$y}\n" .
-                    "30\n" .
-                    "{$z}\n";
-            }
-            $this->shapes[] = $polyline . "0\n";
-        }
-        return $this;
+        return $this->addPolyline($points);
     }
 
 
@@ -702,6 +693,9 @@ class Creator {
 
     private function getEntities()
     {
+        foreach ($this->shapes as &$shape) {
+            $shape = str_replace('{number}', $this->getEntityHandle(), $shape);
+        }
         $entities = implode('', $this->shapes);
         return rtrim($entities, "\n");
     }
@@ -714,9 +708,20 @@ class Creator {
      */
     private function getLtypesString()
     {
-        $lTypes = '';
+        $number = $this->getEntityHandle();
+        $lTypes = "LTYPE\n" .
+            "5\n" .
+            "${number}\n" .
+            "330\n" .
+            "0\n" .
+            "100\n" .
+            "AcDbSymbolTable\n" .
+            "70\n" .
+            "4\n" .
+            "0\n";
         foreach ($this->lTypes as $name) {
-            $lTypes .= LineType::getString($name);
+            $number = $this->getEntityHandle();
+            $lTypes .= LineType::getString($number, $name);
         }
         return rtrim($lTypes, "\n");
     }
@@ -729,16 +734,29 @@ class Creator {
      */
     private function getLayersString()
     {
-        $layers = '';
-        if (count($this->layers) == 0) {
-            $layers = "LAYER\n  0\n";
-        } else {
+        $number = $this->getEntityHandle();
+        $layers = "LAYER\n" .
+            "5\n" .
+            "{$number}\n" .
+            "330\n" .
+            "0\n" .
+            "100\n" .
+            "AcDbSymbolTable\n" .
+            "70\n" .
+            "1\n" .
+            "0\n";
+        if (count($this->layers) > 0) {
             foreach ($this->layers as $name => $layer) {
+                $number = $this->getEntityHandle();
                 $layers .= "LAYER\n" .
+                    "5\n" .
+                    "{$number}\n" .
+                    "100\n" . // Subclass marker
+                    "AcDbSymbolTableRecord\n" .
+                    "100\n" . // Subclass marker
+                    "AcDbLayerTableRecord\n" .
                     "2\n" .
                     "{$name}\n" . // Layer name
-                    "100\n" . // Subclass marker (AcDbSymbolTable)
-                    "AcDbSymbolTable\n" .
                     "70\n" . // Standard flags (bit-coded values)
                     "64\n" .
                     "62\n" . // Color number (if negative, layer is off)

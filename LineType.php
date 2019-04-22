@@ -68,17 +68,18 @@ class LineType {
 
 
     /**
+     * @param $number string
      * @param $type string
      * @see https://www.autodesk.com/techpubs/autocad/acad2000/dxf/common_symbol_table_group_codes_dxf_04.htm
      * @see https://knowledge.autodesk.com/search-result/caas/CloudHelp/cloudhelp/2016/ENU/AutoCAD-DXF/files/GUID-F57A316C-94A2-416C-8280-191E34B182AC-htm.html
      * @return string
      */
-    public static function getString($type)
+    public static function getString($number, $type)
     {
         $name = isset(self::$lines[$type]) ? self::$lines[$type] : '';
         return "LTYPE\n" .
-                "5\n" . // Handle (?)
-                "14\n" .
+                "5\n" . // Handle
+                "{$number}\n" .
                 "330\n" . // Soft-pointer ID/handle to owner object
                 "5\n" .
                 "100\n" . // Subclass marker (AcDbSymbolTable)
