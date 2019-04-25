@@ -54,6 +54,8 @@ See "demo" directory of project.
 
 ```
 composer require adamasantares/dxf "0.1.36"
+or
+composer require adamasantares/dxf "0.1.4b"
 ```
 
 or
@@ -61,6 +63,8 @@ or
 ```
 "require": {
       "adamasantares/dxf": "0.1.36"
+      or
+      "adamasantares/dxf": "0.1.4b"
   }
 ```
 
