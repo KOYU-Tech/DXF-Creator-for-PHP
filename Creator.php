@@ -711,63 +711,36 @@ class Creator {
     private function getLtypesString()
     {
         $ownerHandle = $this->getEntityHandle();
-        $lTypes = "LTYPE\n" .
-            "5\n" .
-            "{$ownerHandle}\n" .
-            "330\n" .
-            "0\n" .
-            "100\n" .
-            "AcDbSymbolTable\n" .
-            "70\n" .
-            "4\n" .
-            "0\n" .
-            "LTYPE\n" .
-            "5\n" .
-            $this->getEntityHandle() . "\n" .
-            "330\n" .
-            "5\n" .
-            "100\n" .
-            "AcDbSymbolTableRecord\n" .
-            "100\n" .
-            "AcDbLinetypeTableRecord\n" .
-            "2\n" .
-            "ByBlock\n" .
-            "70\n" .
-            "0\n" .
-            "3\n" .
-            "\n" .
-            "72\n" .
-            "65\n" .
-            "73\n" .
-            "0\n" .
-            "40\n" .
-            "0\n" .
-            "0\n" .
-            "LTYPE\n" .
-            "5\n" .
-            $this->getEntityHandle() . "\n" .
-            "330\n" .
-            "5\n" .
-            "100\n" .
-            "AcDbSymbolTableRecord\n" .
-            "100\n" .
-            "AcDbLinetypeTableRecord\n" .
-            "2\n" .
-            "ByLayer\n" .
-            "70\n" .
-            "0\n" .
-            "3\n" .
-            "\n" .
-            "72\n" .
-            "65\n" .
-            "73\n" .
-            "0\n" .
-            "40\n" .
-            "0\n" .
-            "0\n";
-        foreach ($this->lTypes as $name) {
+        $lTypes = "LTYPE\n5\n{$ownerHandle}\n330\n0\n100\nAcDbSymbolTable\n70\n4\n0\n" .
+            "LTYPE\n5\n" . $this->getEntityHandle() . "\n330\n5\n100\nAcDbSymbolTableRecord\n100\nAcDbLinetypeTableRecord\n2\nByBlock\n70\n0\n3\n\n72\n65\n73\n0\n40\n0\n0\n" .
+            "LTYPE\n5\n" . $this->getEntityHandle() . "\n330\n5\n100\nAcDbSymbolTableRecord\n100\nAcDbLinetypeTableRecord\n2\nByLayer\n70\n0\n3\n\n72\n65\n73\n0\n40\n0\n0\n";
+        foreach ($this->lTypes as $type) {
             $number = $this->getEntityHandle();
-            $lTypes .= LineType::getString($ownerHandle, $number, $name);
+            $name = isset(LineType::$lines[$type]) ? LineType::$lines[$type][0] : '';
+            $pattern = isset(LineType::$lines[$type][1]) ? LineType::$lines[$type][1] : "73\n0\n40\n0.0";
+            $lTypes .= "LTYPE\n" .
+                "5\n" . // Handle
+                "{$number}\n" .
+                "330\n" . // Soft-pointer ID/handle to owner object
+                "{$ownerHandle}\n" .
+                "100\n" . // Subclass marker (AcDbSymbolTable)
+                "AcDbSymbolTableRecord\n" .
+                "100\n" .
+                "AcDbLinetypeTableRecord\n" .
+                "2\n" . // Linetype name
+                "{$type}\n" .
+                "70\n" . // Standard flag values (bit-coded values)
+                "64\n" .
+                "3\n" . // Descriptive text for linetype
+                "{$name}\n" .
+                "72\n" . // Alignment code; value is always 65, the ASCII code for A
+                "65\n" .
+                // "73\n" . // The number of linetype elements
+                // "0\n" .
+                // "40\n" . // Total pattern length
+                //"0.0\n" .
+                "{$pattern}\n" .
+                "0\n";
         }
         return rtrim($lTypes, "\n");
     }
