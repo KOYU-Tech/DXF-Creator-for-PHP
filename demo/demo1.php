@@ -21,7 +21,7 @@ $dxf
     ->addLine(0, 100, 0, 0, 25, 0)
     ->setLayer('blue', Color::BLUE, LineType::DASHDOT)
     ->addCircle(0, 0, 0, 25)
-    ->setLayer('custom', Color::rgb(10, 145, 230), LineType::DASHED)
+    ->setLayer('custom', Color::rgb(10, 145, 230))//, LineType::DASHED)
     ->addCircle(100, 100, 0, 25)
     ->setLayer('red', Color::RED)
     ->addArc(0, 100, 0, 25, 0.0, 270.0)

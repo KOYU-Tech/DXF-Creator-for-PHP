@@ -9,9 +9,9 @@
  * @author Konstantin Kutsevalov <adamasantares@gmail.com>
  * @since 2015/08
  *
- * @see http://www.autodesk.com/techpubs/autocad/acad2000/dxf/
- * @see (RU) http://help.autodesk.com/view/ACD/2015/RUS/?guid=GUID-235B22E0-A567-4CF6-92D3-38A2306D73F3
- * @see https://www.autodesk.com/techpubs/autocad/acad2000/dxf/common_group_codes_for_entities_dxf_06.htm
+ * @see About DXF structure http://help.autodesk.com/cloudhelp/2016/ENU/AutoCAD-DXF/files/GUID-235B22E0-A567-4CF6-92D3-38A2306D73F3.htm
+ * @see ENTITIES Section http://help.autodesk.com/cloudhelp/2016/ENU/AutoCAD-DXF/files/GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484.htm
+ * @see Common Symbol Table Group Codes http://help.autodesk.com/cloudhelp/2016/ENU/AutoCAD-DXF/files/GUID-8427DD38-7B1F-4B7F-BF66-21ADD1F41295.htm
  *
  * @example <code>
  *     $dxf = new \adamasantares\dxf\Creator( \adamasantares\dxf\Creator::INCHES );
@@ -111,7 +111,7 @@ class Creator {
      * HANDSEED must be larger than the largest handle in the drawing or DXF file.
      * @see https://forums.autodesk.com/t5/autocad-2000-2000i-2002-archive/what-is-the-handle-in-a-dxf-entity/td-p/118936
      */
-    private $handleNumber = 0xff;
+    private $handleNumber = 0x4ff;
 
 
     /**
@@ -190,6 +190,7 @@ class Creator {
     public function setLineType($lineType)
     {
         $this->layers[$this->layerName]['lineType'] = $lineType;
+        $this->lTypes[$lineType] = $lineType;
         return $this;
     }
 
@@ -704,24 +705,69 @@ class Creator {
     /**
      * Generates LTYPE items
      * @return string
-     * @see https://knowledge.autodesk.com/search-result/caas/CloudHelp/cloudhelp/2016/ENU/AutoCAD-DXF/files/GUID-F57A316C-94A2-416C-8280-191E34B182AC-htm.html
+     * @see http://help.autodesk.com/cloudhelp/2016/ENU/AutoCAD-DXF/files/GUID-F57A316C-94A2-416C-8280-191E34B182AC.htm
+     * @see https://ezdxf.readthedocs.io/en/latest/dxfinternals/linetype_table.html
      */
     private function getLtypesString()
     {
-        $number = $this->getEntityHandle();
+        $ownerHandle = $this->getEntityHandle();
         $lTypes = "LTYPE\n" .
             "5\n" .
-            "${number}\n" .
+            "{$ownerHandle}\n" .
             "330\n" .
             "0\n" .
             "100\n" .
             "AcDbSymbolTable\n" .
             "70\n" .
             "4\n" .
+            "0\n" .
+            "LTYPE\n" .
+            "5\n" .
+            $this->getEntityHandle() . "\n" .
+            "330\n" .
+            "5\n" .
+            "100\n" .
+            "AcDbSymbolTableRecord\n" .
+            "100\n" .
+            "AcDbLinetypeTableRecord\n" .
+            "2\n" .
+            "ByBlock\n" .
+            "70\n" .
+            "0\n" .
+            "3\n" .
+            "\n" .
+            "72\n" .
+            "65\n" .
+            "73\n" .
+            "0\n" .
+            "40\n" .
+            "0\n" .
+            "0\n" .
+            "LTYPE\n" .
+            "5\n" .
+            $this->getEntityHandle() . "\n" .
+            "330\n" .
+            "5\n" .
+            "100\n" .
+            "AcDbSymbolTableRecord\n" .
+            "100\n" .
+            "AcDbLinetypeTableRecord\n" .
+            "2\n" .
+            "ByLayer\n" .
+            "70\n" .
+            "0\n" .
+            "3\n" .
+            "\n" .
+            "72\n" .
+            "65\n" .
+            "73\n" .
+            "0\n" .
+            "40\n" .
+            "0\n" .
             "0\n";
         foreach ($this->lTypes as $name) {
             $number = $this->getEntityHandle();
-            $lTypes .= LineType::getString($number, $name);
+            $lTypes .= LineType::getString($ownerHandle, $number, $name);
         }
         return rtrim($lTypes, "\n");
     }
@@ -730,7 +776,7 @@ class Creator {
     /**
      * Generates LAYERS
      * @return string
-     * @see https://knowledge.autodesk.com/search-result/caas/CloudHelp/cloudhelp/2016/ENU/AutoCAD-DXF/files/GUID-D94802B0-8BE8-4AC9-8054-17197688AFDB-htm.html
+     * @see http://help.autodesk.com/cloudhelp/2016/ENU/AutoCAD-DXF/files/GUID-D94802B0-8BE8-4AC9-8054-17197688AFDB.htm
      */
     private function getLayersString()
     {
@@ -763,6 +809,8 @@ class Creator {
                     "{$layer['color']}\n" .
                     "6\n" . // Linetype name
                     "{$layer['lineType']}\n" .
+                    "390\n" .
+                    "F\n" .
                     "0\n";
             }
         }
