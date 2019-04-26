@@ -216,20 +216,13 @@ class Creator {
         $y += $this->offset[1];
         $z += $this->offset[2];
         $this->shapes[] = "POINT\n" .
-            "5\n" . // Entity Handle
-            "{number}\n" .
-            "100\n" . // Subclass marker (AcDbEntity)
-            "AcDbEntity\n" .
-            "8\n" . // Layer name
-            "{$this->layerName}\n" .
-            "100\n" . // Subclass marker (AcDbPoint)
-            "AcDbPoint\n" .
-            "10\n" . // X value
-            "{$x}\n" .
-            "20\n" . // Y value
-            "{$y}\n" .
-            "30\n" . // Z value
-            "{$z}\n" .
+            "5\n{handle}\n" . // Entity Handle
+            "100\nAcDbEntity\n" . // Subclass marker (AcDbEntity)
+            "8\n{$this->layerName}\n" . // Layer name
+            "100\nAcDbPoint\n" . // Subclass marker (AcDbPoint)
+            "10\n{$x}\n" . // X value
+            "20\n{$y}\n" . // Y value
+            "30\n{$z}\n" . // Z value
             "0\n";
         return $this;
     }
@@ -255,26 +248,16 @@ class Creator {
         $y2 += $this->offset[1];
         $z2 += $this->offset[2];
         $this->shapes[] = "LINE\n" .
-            "5\n" . // Entity Handle
-            "{number}\n" .
-            "100\n" . // Subclass marker (AcDbEntity)
-            "AcDbEntity\n" .
-            "8\n" . // Layer name
-            "{$this->layerName}\n" .
-            "100\n" .
-            "AcDbLine\n" . // Subclass marker (AcDbLine)
-            "10\n" . // Start point X
-            "{$x}\n" .
-            "20\n" . // Start point Y
-            "{$y}\n" .
-            "30\n" . // Start point Z
-            "{$z}\n" .
-            "11\n" . // End point X
-            "{$x2}\n" .
-            "21\n" . // End point Y
-            "{$y2}\n" .
-            "31\n" . // End point Z
-            "{$z2}\n" .
+            "5\n{handle}\n" . // Entity Handle
+            "100\nAcDbEntity\n" . // Subclass marker (AcDbEntity)
+            "8\n{$this->layerName}\n" . // Layer name
+            "100\nAcDbLine\n" . // Subclass marker (AcDbLine)
+            "10\n{$x}\n" . // Start point X
+            "20\n{$y}\n" . // Start point Y
+            "30\n{$z}\n" . // Start point Z
+            "11\n{$x2}\n" . // End point X
+            "21\n{$y2}\n" . // End point Y
+            "31\n{$z2}\n" . // End point Z
             "0\n";
         return $this;
     }
@@ -303,48 +286,27 @@ class Creator {
         $horizontalJustification = ($position - 1) % 3;
         $verticalJustification = 3 - intval(($position -1) / 3);
         $this->shapes[] = "TEXT\n" .
-            "5\n" . // Entity Handle
-            "{number}\n" .
-            "100\n" . // Subclass marker (AcDbEntity)
-            "AcDbEntity\n" .
-            "8\n" . // Layer name
-            "{$this->layerName}\n" .
-            "100\n" . // Subclass marker (AcDbText)
-            "AcDbText\n" .
-            "39\n" . // Thickness (optional; default = 0)
-            "{$thickness}\n" .
-            "10\n" . // First alignment point, X value
-            "{$x}\n" .
-            "20\n" . // First alignment point, Y value
-            "{$y}\n" .
-            "30\n" . // First alignment point, Z value
-            "{$z}\n" .
-            "40\n" . // Text height
-            "{$textHeight}\n" .
-            "1\n" . // Default value (the string itself)
-            "{$text}\n" .
-            "50\n" . // Text rotation (optional; default = 0)
-            "{$angle}\n" .
-            "41\n" . // Relative X scale factor—width (optional; default = 1)
-            "1\n" .
-            "51\n" . // Oblique angle (optional; default = 0)
-            "0\n" .
-            "7\n" . // Text style name (optional, default = STANDARD)
-            "STANDARD\n" .
-            "71\n" . // Text generation flags (optional, default = 0)
-            "0\n" .
-            "72\n" . // Horizontal text justification type (optional, default = 0) integer codes (not bit-coded): 0 = Left, 1= Center, 2 = Right, 3 = Aligned, 4 = Middle, 5 = Fit
-            "{$horizontalJustification}\n" .
-            "11\n" . // Second alignment point, X value
-            "{$x}\n" .
-            "21\n" . // Second alignment point, Y value
-            "{$y}\n" .
-            "31\n" . // Second alignment point, Z value
-            "{$z}\n" .
-            "100\n" . // Subclass marker (AcDbText)
-            "AcDbText\n" .
-            "73\n" . // Vertical text justification type (optional, default = 0): integer codes (not bit-coded): 0 = Baseline, 1 = Bottom, 2 = Middle, 3 = Top
-            "{$verticalJustification}\n" .
+            "5\n{handle}\n" . // Entity Handle
+            "100\nAcDbEntity\n" . // Subclass marker (AcDbEntity)
+            "8\n{$this->layerName}\n" . // Layer name
+            "100\nAcDbText\n" . // Subclass marker (AcDbText)
+            "39\n{$thickness}\n" . // Thickness (optional; default = 0)
+            "10\n{$x}\n" . // First alignment point, X value
+            "20\n{$y}\n" . // First alignment point, Y value
+            "30\n{$z}\n" . // First alignment point, Z value
+            "40\n{$textHeight}\n" . // Text height
+            "1\n{$text}\n" . // Default value (the string itself)
+            "50\n{$angle}\n" . // Text rotation (optional; default = 0)
+            "41\n1\n" . // Relative X scale factor—width (optional; default = 1)
+            "51\n0\n" . // Oblique angle (optional; default = 0)
+            "7\nSTANDARD\n" . // Text style name (optional, default = STANDARD)
+            "71\n0\n" . // Text generation flags (optional, default = 0)
+            "72\n{$horizontalJustification}\n" . // Horizontal text justification type (optional, default = 0) integer codes (not bit-coded): 0 = Left, 1= Center, 2 = Right, 3 = Aligned, 4 = Middle, 5 = Fit
+            "11\n{$x}\n" . // Second alignment point, X value
+            "21\n{$y}\n" . // Second alignment point, Y value
+            "31\n{$z}\n" . // Second alignment point, Z value
+            "100\nAcDbText\n" . // Subclass marker (AcDbText)
+            "73\n{$verticalJustification}\n" . // Vertical text justification type (optional, default = 0): integer codes (not bit-coded): 0 = Baseline, 1 = Bottom, 2 = Middle, 3 = Top
             "0\n";
         return $this;
     }
@@ -365,22 +327,14 @@ class Creator {
         $y += $this->offset[1];
         $z += $this->offset[2];
         $this->shapes[] = "CIRCLE\n" .
-            "5\n" . // Entity Handle
-            "{number}\n" .
-            "100\n" . // Subclass marker (AcDbEntity)
-            "AcDbEntity\n" .
-            "8\n" . // Layer name
-            "{$this->layerName}\n" .
-            "100\n" . // Subclass marker (AcDbCircle)
-            "AcDbCircle\n" .
-            "10\n" . // Center point, X value
-            "{$x}\n" .
-            "20\n" . // Center point, Y value
-            "{$y}\n" .
-            "30\n" . // Center point, Z value
-            "{$z}\n" .
-            "40\n" . // Radius
-            "{$radius}\n" .
+            "5\n{handle}\n" . // Entity Handle
+            "100\nAcDbEntity\n" . // Subclass marker (AcDbEntity)
+            "8\n{$this->layerName}\n" . // Layer name
+            "100\nAcDbCircle\n" . // Subclass marker (AcDbCircle)
+            "10\n{$x}\n" . // Center point, X value
+            "20\n{$y}\n" . // Center point, Y value
+            "30\n{$z}\n" . // Center point, Z value
+            "40\n{$radius}\n" . // Radius
             "0\n";
         return $this;
     }
@@ -404,30 +358,18 @@ class Creator {
         $y += $this->offset[1];
         $z += $this->offset[2];
         $this->shapes[] = "ARC\n" .
-            "5\n" . // Entity Handle
-            "{number}\n" .
-            "100\n" . // Subclass marker (AcDbEntity)
-            "AcDbEntity\n" .
-            "8\n" . // Layer name
-            "{$this->layerName}\n" .
-            "100\n" . // Subclass marker (AcDbCircle)
-            "AcDbCircle\n" .
-            "39\n" . // Thickness (optional; default = 0)
-            "0\n" .
-            "10\n" . // Center point, X value
-            "{$x}\n" .
-            "20\n" . // Center point, Y value
-            "{$y}\n" .
-            "30\n" . // Center point, Z value
-            "{$z}\n" .
-            "40\n" . // Radius
-            "{$radius}\n" .
-            "100\n" . // Subclass marker (AcDbArc)
-            "AcDbArc\n" .
-            "50\n" . // Start angle
-            "{$startAngle}\n" .
-            "51\n" . // End angle
-            "{$endAngle}\n" .
+            "5\n{handle}\n" . // Entity Handle
+            "100\nAcDbEntity\n" . // Subclass marker (AcDbEntity)
+            "8\n{$this->layerName}\n" . // Layer name
+            "100\nAcDbCircle\n" . // Subclass marker (AcDbCircle)
+            "39\n0\n" . // Thickness (optional; default = 0)
+            "10\n{$x}\n" . // Center point, X value
+            "20\n{$y}\n" . // Center point, Y value
+            "30\n{$z}\n" . // Center point, Z value
+            "40\n{$radius}\n" . // Radius
+            "100\nAcDbArc\n" . // Subclass marker (AcDbArc)
+            "50\n{$startAngle}\n" . // Start angle
+            "51\n{$endAngle}\n" . // End angle
             "0\n";
         return $this;
     }
@@ -453,32 +395,19 @@ class Creator {
         $my -= $cy;
         $mz -= $cz;
         $this->shapes[] = "ELLIPSE\n" .
-            "5\n" . // Entity Handle
-            "{number}\n" .
-            "100\n" . // Subclass marker (AcDbEntity)
-            "AcDbEntity\n" .
-            "8\n" . // Layer name
-            "{$this->layerName}\n" .
-            "100\n" . // Subclass marker (AcDbEllipse)
-            "AcDbEllipse\n" .
-            "10\n" . // Center point, X value
-            "{$cx}\n" .
-            "20\n" . // Center point, Y value
-            "{$cy}\n" .
-            "30\n" . // Center point, Z value
-            "{$cz}\n" .
-            "11\n" . // Endpoint of major axis, X value
-            "{$mx}\n" .
-            "21\n" . // Endpoint of major axis, Y value
-            "{$my}\n" .
-            "31\n" . // Endpoint of major axis, Z value
-            "{$mz}\n" .
-            "40\n" . // Ratio of minor axis to major axis
-            "{$ratio}\n" .
-            "41\n" . // Start parameter (this value is 0.0 for a full ellipse)
-            "{$start}\n" .
-            "42\n" . // End parameter (this value is 2pi for a full ellipse)
-            "{$end}\n" .
+            "5\n{handle}\n" . // Entity Handle
+            "100\nAcDbEntity\n" . // Subclass marker (AcDbEntity)
+            "8\n{$this->layerName}\n" . // Layer name
+            "100\nAcDbEllipse\n" . // Subclass marker (AcDbEllipse)
+            "10\n{$cx}\n" . // Center point, X value
+            "20\n{$cy}\n" . // Center point, Y value
+            "30\n{$cz}\n" . // Center point, Z value
+            "11\n{$mx}\n" . // Endpoint of major axis, X value
+            "21\n{$my}\n" . // Endpoint of major axis, Y value
+            "31\n{$mz}\n" . // Endpoint of major axis, Z value
+            "40\n{$ratio}\n" . // Ratio of minor axis to major axis
+            "41\n{$start}\n" . // Start parameter (this value is 0.0 for a full ellipse)
+            "42\n{$end}\n" . // End parameter (this value is 2pi for a full ellipse)
             "0\n";
         return $this;
     }
@@ -509,32 +438,19 @@ class Creator {
         $my -= $cy;
         $mz -= $cz;
         $this->shapes[] = "ELLIPSE\n" .
-            "5\n" . // Entity Handle
-            "{number}\n" .
-            "100\n" . // Subclass marker (AcDbEntity)
-            "AcDbEntity\n" .
-            "8\n" . // Layer name
-            "{$this->layerName}\n" .
-            "100\n" . // Subclass marker (AcDbEllipse)
-            "AcDbEllipse\n" .
-            "10\n" . // Center point, X value
-            "{$cx}\n" .
-            "20\n" . // Center point, Y value
-            "{$cy}\n" .
-            "30\n" . // Center point, Z value
-            "{$cz}\n" .
-            "11\n" . // Endpoint of major axis, X value
-            "{$mx}\n" .
-            "21\n" . // Endpoint of major axis, Y value
-            "{$my}\n" .
-            "31\n" . // Endpoint of major axis, Z value
-            "{$mz}\n" .
-            "40\n" . // Ratio of minor axis to major axis
-            "{$ratio}\n" .
-            "41\n" . // Start parameter (this value is 0.0 for a full ellipse)
-            "{$start}\n" .
-            "42\n" . // End parameter (this value is 2pi for a full ellipse)
-            "{$end}\n" .
+            "5\n{handle}\n" . // Entity Handle
+            "100\nAcDbEntity\n" . // Subclass marker (AcDbEntity)
+            "8\n{$this->layerName}\n" . // Layer name
+            "100\nAcDbEllipse\n" . // Subclass marker (AcDbEllipse)
+            "10\n{$cx}\n" . // Center point, X value
+            "20\n{$cy}\n" . // Center point, Y value
+            "30\n{$cz}\n" . // Center point, Z value
+            "11\n{$mx}\n" . // Endpoint of major axis, X value
+            "21\n{$my}\n" . // Endpoint of major axis, Y value
+            "31\n{$mz}\n" . // Endpoint of major axis, Z value
+            "40\n{$ratio}\n" . // Ratio of minor axis to major axis
+            "41\n{$start}\n" . // Start parameter (this value is 0.0 for a full ellipse)
+            "42\n{$end}\n" . // End parameter (this value is 2pi for a full ellipse)
             "0\n";
         return $this;
     }
@@ -553,32 +469,19 @@ class Creator {
         if ($count > 2 && ($count % 2) == 0) {
             $dots = ($count / 2 + 1);
             $polyline = "LWPOLYLINE\n" .
-                "5\n" . // Entity Handle
-                "{number}\n" .
-                "100\n" . // Subclass marker (AcDbEntity)
-                "AcDbEntity\n" .
-                "8\n" . // Layer name
-                "{$this->layerName}\n" .
-                "100\n" . // Subclass marker (AcDbPolyline)
-                "AcDbPolyline\n" .
-                "90\n" . // Number of vertices
-                "{$dots}\n" .
-                "70\n" . // Polyline flag (bit-coded); default is 0: 1 = Closed; 128 = Plinegen
-                "{$flag}\n" .
-                "43\n" . // Constant width (optional; default = 0).
-                "0\n" .
-                "38\n" . // Elevation (optional; default = 0)
-                "0\n" .
-                "39\n" . // Thickness (optional; default = 0)
-                "0\n";
+                "5\n{handle}\n" . // Entity Handle
+                "100\nAcDbEntity\n" . // Subclass marker (AcDbEntity)
+                "8\n{$this->layerName}\n" . // Layer name
+                "100\nAcDbPolyline\n" . // Subclass marker (AcDbPolyline)
+                "90\n{$dots}\n" . // Number of vertices
+                "70\n{$flag}\n" . // Polyline flag (bit-coded); default is 0: 1 = Closed; 128 = Plinegen
+                "43\n0\n" . // Constant width (optional; default = 0).
+                "38\n0\n" . // Elevation (optional; default = 0)
+                "39\n0\n"; // Thickness (optional; default = 0)
             for ($i = 0; $i < $count; $i += 2) {
                 $x = $points[$i] + $this->offset[0];
                 $y = $points[$i+1] + $this->offset[1];
-                $polyline .=
-                    "10\n" .
-                    "{$x}\n" .
-                    "20\n" .
-                    "{$y}\n";
+                $polyline .= "10\n{$x}\n20\n{$y}\n"; // x & y
             }
             $this->shapes[] = $polyline . "0\n";
         }
@@ -679,15 +582,7 @@ class Creator {
         $lTypes = $this->getLtypesString();
         $layers = $this->getLayersString();
         $entities = $this->getEntities();
-        $dxf = str_replace([
-            '{LTYPES_TABLE}',
-            '{LAYERS_TABLE}',
-            '{ENTITIES_SECTION}'
-        ], [
-            $lTypes,
-            $layers,
-            $entities
-        ], $template);
+        $dxf = str_replace(['{LTYPES_TABLE}', '{LAYERS_TABLE}', '{ENTITIES_SECTION}'], [$lTypes, $layers, $entities], $template);
         return  $dxf;
     }
 
@@ -695,7 +590,7 @@ class Creator {
     private function getEntities()
     {
         foreach ($this->shapes as &$shape) {
-            $shape = str_replace('{number}', $this->getEntityHandle(), $shape);
+            $shape = str_replace('{handle}', $this->getEntityHandle(), $shape);
         }
         $entities = implode('', $this->shapes);
         return rtrim($entities, "\n");
@@ -719,28 +614,15 @@ class Creator {
             $name = isset(LineType::$lines[$type]) ? LineType::$lines[$type][0] : '';
             $pattern = isset(LineType::$lines[$type][1]) ? LineType::$lines[$type][1] : "73\n0\n40\n0.0";
             $lTypes .= "LTYPE\n" .
-                "5\n" . // Handle
-                "{$number}\n" .
-                "330\n" . // Soft-pointer ID/handle to owner object
-                "{$ownerHandle}\n" .
-                "100\n" . // Subclass marker (AcDbSymbolTable)
-                "AcDbSymbolTableRecord\n" .
-                "100\n" .
-                "AcDbLinetypeTableRecord\n" .
-                "2\n" . // Linetype name
-                "{$type}\n" .
-                "70\n" . // Standard flag values (bit-coded values)
-                "64\n" .
-                "3\n" . // Descriptive text for linetype
-                "{$name}\n" .
-                "72\n" . // Alignment code; value is always 65, the ASCII code for A
-                "65\n" .
-                // "73\n" . // The number of linetype elements
-                // "0\n" .
-                // "40\n" . // Total pattern length
-                //"0.0\n" .
-                "{$pattern}\n" .
-                "0\n";
+                "5\n{$number}\n" . // Handle
+                "330\n{$ownerHandle}\n" . // Soft-pointer ID/handle to owner object
+                "100\nAcDbSymbolTableRecord\n" . // Subclass marker (AcDbSymbolTable)
+                "100\nAcDbLinetypeTableRecord\n" .
+                "2\n{$type}\n" . // Linetype name
+                "70\n64\n" . // Standard flag values (bit-coded values)
+                "3\n{$name}\n" . // Descriptive text for linetype
+                "72\n65\n" . // Alignment code; value is always 65, the ASCII code for A
+                "{$pattern}\n0\n";
         }
         return rtrim($lTypes, "\n");
     }
@@ -754,36 +636,19 @@ class Creator {
     private function getLayersString()
     {
         $number = $this->getEntityHandle();
-        $layers = "LAYER\n" .
-            "5\n" .
-            "{$number}\n" .
-            "330\n" .
-            "0\n" .
-            "100\n" .
-            "AcDbSymbolTable\n" .
-            "70\n" .
-            "1\n" .
-            "0\n";
+        $layers = "LAYER\n5\n{$number}\n330\n0\n100\nAcDbSymbolTable\n70\n1\n0\n";
         if (count($this->layers) > 0) {
             foreach ($this->layers as $name => $layer) {
                 $number = $this->getEntityHandle();
                 $layers .= "LAYER\n" .
-                    "5\n" .
-                    "{$number}\n" .
-                    "100\n" . // Subclass marker
-                    "AcDbSymbolTableRecord\n" .
-                    "100\n" . // Subclass marker
-                    "AcDbLayerTableRecord\n" .
-                    "2\n" .
-                    "{$name}\n" . // Layer name
-                    "70\n" . // Standard flags (bit-coded values)
-                    "64\n" .
-                    "62\n" . // Color number (if negative, layer is off)
-                    "{$layer['color']}\n" .
-                    "6\n" . // Linetype name
-                    "{$layer['lineType']}\n" .
-                    "390\n" .
-                    "F\n" .
+                    "5\n{$number}\n" .
+                    "100\nAcDbSymbolTableRecord\n" . // Subclass marker
+                    "100\nAcDbLayerTableRecord\n" . // Subclass marker
+                    "2\n{$name}\n" . // Layer name
+                    "70\n64\n" . // Standard flags (bit-coded values)
+                    "62\n{$layer['color']}\n" . // Color number (if negative, layer is off)
+                    "6\n{$layer['lineType']}\n" . // Linetype name
+                    "390\nF\n" .
                     "0\n";
             }
         }
