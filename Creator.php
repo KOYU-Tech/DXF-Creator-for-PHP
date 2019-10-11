@@ -279,6 +279,64 @@ class Creator {
         return $this;
     }
 
+    /**
+     * Add a solid to the current layout
+     * @param float $x
+     * @param float $y
+     * @param float $z
+     * @param float $w
+     * @param float $h
+     * @return Creator $this
+     * @see http://help.autodesk.com/view/ACD/2016/ENU/?guid=GUID-E0C5F04E-D0C5-48F5-AC09-32733E8848F2
+     */
+    public function addSolid($x, $y, $z=0.0, $w=0.0, $h=0.0)
+    {
+        $y1 = $y+$h;
+        $x1 = $x+$w;
+        $this->shapes[] = "SOLID\n" .
+            "5\n" . // Entity Handle
+            "{number}\n" .
+            "100\n" . // Subclass marker (AcDbEntity)
+            "AcDbEntity\n" .
+            "8\n" . // Layer name
+            "{$this->layerName}\n" .
+            "100\n" . // Subclass marker (AcDbTrace)
+            "AcDbTrace\n" .
+            "10\n" . // First corner, X
+            "{$x}\n" .
+            "20\n" . // First corner, Y
+            "{$y}\n" .
+            "30\n" . // First corner, Z
+            "{$z}\n" .
+            "11\n" . // Second corner, X
+            "{$x}\n" .
+            "21\n" . // Second corner, Y
+            "{$y1}\n" .
+            "31\n" . // Second corner, Z
+            "{$z}\n" .
+            "12\n" . // Third corner, X
+            "{$x1}\n" .
+            "22\n" . // Third corner, Y
+            "{$y1}\n" .
+            "32\n" . // Third corner, Z
+            "{$z}\n" .
+            "13\n" . // Fourth corner, X
+            "{$x1}\n" .
+            "23\n" . // Fourth corner, Y
+            "{$y}\n" .
+            "33\n" . // Fourth corner, Z
+            "{$z}\n" .
+            "39\n" . // Thickness
+            "0\n" .
+            "210\n". // Extrusion Direction, X
+            "0\n" .
+            "220\n". // Extrusion Direction, Y
+            "0\n" .
+            "230\n". // Extrusion Direction, Z
+            "1\n" .
+            "0\n";
+        return $this;
+    }
 
     /**
      * Add text to current layer
