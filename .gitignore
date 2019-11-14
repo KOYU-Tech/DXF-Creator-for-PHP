@@ -1,2 +1,4 @@
 test
 .idea
+vendor/
+*.lock
