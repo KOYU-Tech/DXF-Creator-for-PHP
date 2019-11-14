@@ -353,12 +353,23 @@ class Creator {
      */
     public function addText($x, $y, $z, $text, $textHeight, $position = 7, $angle = 0.0, $thickness = 0)
     {
+        $positions = [
+            1 => [3, 0], // top-left
+            2 => [3, 1], // top-center
+            3 => [3, 2], // top-right
+            4 => [2, 0], // center-left
+            5 => [2, 1], // center
+            6 => [2, 2], // center-right
+            7 => [1, 0], // bottom-left
+            8 => [1, 1], // bottom-center
+            9 => [1, 2]  // bottom-right
+        ];
         $x += $this->offset[0];
         $y += $this->offset[1];
         $z += $this->offset[2];
         $angle = deg2rad($angle);
-        $horizontalJustification = ($position - 1) % 3;
-        $verticalJustification = 3 - intval(($position -1) / 3);
+        $verticalJustification = $positions[$position][0];
+        $horizontalJustification = $positions[$position][1];
         $this->shapes[] = "TEXT\n" .
             "5\n" . // Entity Handle
             "{number}\n" .
