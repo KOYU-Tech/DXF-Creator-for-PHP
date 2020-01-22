@@ -82,6 +82,10 @@ class Creator {
 
     private $lTypes = [];
 
+    private $textStyles = [];
+
+    private $textStyleName = 'STANDARD';
+
     /**
      * Current layer name
      * @var int
@@ -194,6 +198,38 @@ class Creator {
         return $this;
     }
 
+    /**
+     * Sets current style for drawing. If style does not exist then it will be created.
+     * @param string $params [name, font]
+     * @return Creator Instance
+     */
+    public function setTextStyle($name, $font, $stdFlags = 0, $fixedHeight = 0, $widthFactor = 0, $obliqueAngle = 0, $textGenerationFlags = 0, $lastHeightUsed = 0, $bigFont = null)
+    {
+        if ( !isset($this->textStyles[$name]) ) {
+            $this->textStyles[$name] = [
+                'name' => $name,
+                'font' => $font,
+                'stdFlags' => $stdFlags,
+                'fixedHeight' => $fixedHeight,
+                'widthFactor' => $widthFactor,
+                'obliqueAngle' => $obliqueAngle,
+                'textGenerationFlags' => $textGenerationFlags,
+                'lastHeightUsed' => $lastHeightUsed,
+                'bigFont' => $bigFont,
+            ];
+        }
+        $this->textStyleName = $name;
+        return $this;
+    }
+
+
+    /**
+     * Returns current style name
+     */
+    public function getTextStyle()
+    {
+        return $this->textStyleName;
+    }
 
     private function getEntityHandle()
     {
@@ -398,7 +434,7 @@ class Creator {
             "51\n" . // Oblique angle (optional; default = 0)
             "0\n" .
             "7\n" . // Text style name (optional, default = STANDARD)
-            "STANDARD\n" .
+            "{$this->textStyleName}\n" .
             "71\n" . // Text generation flags (optional, default = 0)
             "0\n" .
             "72\n" . // Horizontal text justification type (optional, default = 0) integer codes (not bit-coded): 0 = Left, 1= Center, 2 = Right, 3 = Aligned, 4 = Middle, 5 = Fit
@@ -744,14 +780,17 @@ class Creator {
         $template = file_get_contents(__DIR__ . '/template.dxf');
         $lTypes = $this->getLtypesString();
         $layers = $this->getLayersString();
+        $textStyles = $this->getTextStylesString();
         $entities = $this->getEntities();
         $dxf = str_replace([
             '{LTYPES_TABLE}',
             '{LAYERS_TABLE}',
+            '{STYLES_TABLE}',
             '{ENTITIES_SECTION}'
         ], [
             $lTypes,
             $layers,
+            $textStyles,
             $entities
         ], $template);
         return  $dxf;
@@ -845,7 +884,53 @@ class Creator {
         return rtrim($layers, "\n");
     }
 
+    /**
+     * Generates TEXTSTYLES
+     * @return string
+     * @see https://help.autodesk.com/cloudhelp/2016/ENU/AutoCAD-DXF/files/GUID-EF68AF7C-13EF-45A1-8175-ED6CE66C8FC9.htm
+     */
+    private function getTextStylesString()
+    {
+        $ownerNumber = $this->getEntityHandle();
+        $textStyles = "STYLE\n5\n{$ownerNumber}\n330\n0\n100\nAcDbSymbolTable\n70\n3\n0\n";
 
+        if (count($this->textStyles) > 0) {
+            foreach ($this->textStyles as $name => $style) {
+                $number = $this->getEntityHandle();
+                $textStyles .= "STYLE\n" .
+                    "5\n" .
+                    "{$number}\n" .
+                    "330\n" .
+                    "{$ownerNumber}\n" .
+                    "100\n" . // Subclass marker
+                    "AcDbSymbolTableRecord\n" . // Subclass marker value
+                    "100\n" . // Subclass marker group code
+                    "AcDbTextStyleTableRecord\n" . // Subclass marker value
+                    "2\n" . // Style name group code
+                    "{$style['name']}\n" . // Style name value
+                    "70\n" . // Standard flags group code
+                    "{$style['stdFlags']}\n" . // Standard flags values
+                    "40\n" . // Fixed text height group code
+                    "{$style['fixedHeight']}\n" . // Fixed text height value;
+                    "41\n" . // Width factor group code
+                    "{$style['widthFactor']}\n" . // Width factor value
+                    "50\n" . // Oblique angle group code
+                    "{$style['obliqueAngle']}\n" . // Oblique angle value
+                    "71\n" . // Text generation flags group code
+                    "{$style['textGenerationFlags']}\n" . // Text generation flags value; 2 = Text is backward (mirrored in X); 4 = Text is upside down (mirrored in Y)
+                    "42\n" . // Last height used group code
+                    "{$style['lastHeightUsed']}\n" . // Last height used value
+                    "3\n" . // Primary font file name group code
+                    "{$style['font']}\n" . // Primary font file name value
+                    "4\n" . // Bigfont file name group code
+                    "{$style['bigFont']}\n"; // Bigfont file name value; blank if none
+            }
+
+            $textStyles .= "0\n";
+        }
+        return rtrim($textStyles, "\n");
+    }
+    
     public function __toString(){
         return $this->getString();
     }

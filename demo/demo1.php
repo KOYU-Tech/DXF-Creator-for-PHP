@@ -12,8 +12,8 @@ use adamasantares\dxf\Color;
 use adamasantares\dxf\LineType;
 
 $dxf = new Creator();
-$dxf
-    ->addText(26, 46, 0, 'DXF testing', 8)
+$dxf->setTextStyle('Consolas Regular', 'consola')
+    ->addText(50, 50, 0, 'DXF testing', 8, 5)
     ->setLayer('cyan', Color::CYAN)
     ->addLine(25, 0, 0, 100, 0, 0)
     ->addLine(100, 0, 0, 100, 75, 0)
