@@ -1,5 +1,5 @@
 {
-	"name": "adamasantares/dxf",
+	"name": "ercon/dxf",
 	"description": "A simple DXF creator for PHP",
 	"keywords": ["php", "dxf"],
 	"homepage": "https://github.com/active-programming/DXF-Creator-for-PHP#readme",
