@@ -54,16 +54,12 @@ See "demo" directory of project.
 
 ```
 composer require adamasantares/dxf "0.1.5"
-or
-composer require adamasantares/dxf "0.1.5"
 ```
 
 or
 
 ```
 "require": {
-      "adamasantares/dxf": "0.1.5"
-      or
       "adamasantares/dxf": "0.1.5"
   }
 ```
