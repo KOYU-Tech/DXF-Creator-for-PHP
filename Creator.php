@@ -870,7 +870,7 @@ class Creator {
      * Returns DXF document as string
      * @return string DXF document
      */
-    private function getString()
+    public function getString()
     {
         $template = file_get_contents(__DIR__ . '/template.dxf');
 		$images = $this->getImagesString();
