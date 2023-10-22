@@ -5,11 +5,18 @@ This code is the upgrade of [DXF-Writer](http://www.phpclasses.org/package/7954-
 
 ## Examples
 
-Miscellaneous:
+Miscellaneous with image:
 
 ```
+// Setting image data
+$path="./peludito.png";
+$size=getimagesize($path);
+$width=$size[0];
+$height=$size[1];
+
 $dxf = new Creator(Creator::MILLIMETERS);
-$dxf->addText(26, 46, 0, 'DXF testing', 8)
+$dxf->setTextStyle('Consolas Regular', 'consola')
+    ->addText(26, 46, 0, 'DXF testing', 8)
     ->setColor(Color::CYAN) // change color of default layer
     ->addLine(25, 0, 0, 100, 0, 0)
     ->addLine(100, 0, 0, 100, 75, 0)
@@ -28,39 +35,26 @@ $dxf->addText(26, 46, 0, 'DXF testing', 8)
     ->addPoint(0, 100, 0)
     ->addPoint(100, 100, 0)
     ->addPoint(100, 0, 0)
+    ->addImage(0, 0, 0, 50, 50, 0, $path, $width, $height)
     ->saveToFile('demo.dxf');
 ```
 
 Result:
 
-<img src="https://raw.githubusercontent.com/active-programming/DXF-Creator-for-PHP/master/demo/misc.png" alt="" />
+<img src="https://raw.githubusercontent.com/mariofevre/DXF-Creator-for-PHP/master/demo/demo4.png" alt="" />
 
-Ellipse:
-
-```
-$dxf = new Creator(Creator::MILLIMETERS);
-$dxf->setColor(Color::rgb(0, 100, 0))
-    ->addEllipse(-20, 0, 0, -20, 30, 0, 0.5)
-    ->setLayer('2', Color::MAGENTA, LineType::SOLID)
-    ->addEllipseBy3Points(20, 0, 0, 20, 30, 0, 35, 0, 0)
-    ->saveToFile(dirname(__FILE__) . '/demo3.dxf');
-```
-
-<img src="https://raw.githubusercontent.com/active-programming/DXF-Creator-for-PHP/master/demo/ellipse3.png" alt="" />
-
-See "demo" directory of project.
 
 ## Install by Composer
 
 ```
-composer require adamasantares/dxf "0.1.35"
+composer require adamasantares/dxf "0.1.6"
 ```
 
 or
 
 ```
 "require": {
-      "adamasantares/dxf": "0.1.35"
+      "adamasantares/dxf": "0.1.6"
   }
 ```
 

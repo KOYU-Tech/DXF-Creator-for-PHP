@@ -1073,6 +1073,62 @@ SECTION
 2
 CLASSES
 0
+CLASS
+1
+RASTERVARIABLES
+2
+AcDbRasterVariables
+3
+ISM
+ 90
+32768
+280
+ 0
+281
+ 0
+0
+CLASS
+1
+IMAGEDEF
+2
+AcDbRasterImageDef
+3
+ISM
+ 90
+32768
+280
+ 0
+281
+ 0
+0
+CLASS
+1
+IMAGE
+2
+AcDbRasterImage
+3
+ISM
+ 90
+32895
+280
+ 0
+281
+ 1
+0
+CLASS
+1
+IMAGEDEF_REACTOR
+2
+AcDbRasterImageDefReactor
+3
+ISM
+ 90
+32769
+280
+ 0
+281
+ 0
+0
 ENDSEC
 0
 SECTION
@@ -1221,7 +1277,7 @@ TABLE
 2
 LTYPE
 5
-500
+506
 330
 0
 100
@@ -1231,9 +1287,9 @@ AcDbSymbolTable
 0
 LTYPE
 5
-501
+507
 330
-5
+506
 100
 AcDbSymbolTableRecord
 100
@@ -1253,9 +1309,9 @@ ByBlock
 0
 LTYPE
 5
-502
+508
 330
-5
+506
 100
 AcDbSymbolTableRecord
 100
@@ -1275,9 +1331,9 @@ ByLayer
 0
 LTYPE
 5
-503
+509
 330
-500
+506
 100
 AcDbSymbolTableRecord
 100
@@ -1297,9 +1353,9 @@ Solid line
 0
 LTYPE
 5
-504
+50a
 330
-500
+506
 100
 AcDbSymbolTableRecord
 100
@@ -1339,7 +1395,7 @@ TABLE
 2
 LAYER
 5
-505
+50b
 330
 0
 100
@@ -1349,7 +1405,9 @@ AcDbSymbolTable
 0
 LAYER
 5
-506
+50c
+330
+50b
 100
 AcDbSymbolTableRecord
 100
@@ -1367,7 +1425,9 @@ F
 0
 LAYER
 5
-507
+50d
+330
+50b
 100
 AcDbSymbolTableRecord
 100
@@ -1385,7 +1445,9 @@ F
 0
 LAYER
 5
-508
+50e
+330
+50b
 100
 AcDbSymbolTableRecord
 100
@@ -1403,7 +1465,9 @@ F
 0
 LAYER
 5
-509
+50f
+330
+50b
 100
 AcDbSymbolTableRecord
 100
@@ -1421,7 +1485,9 @@ F
 0
 LAYER
 5
-50a
+510
+330
+50b
 100
 AcDbSymbolTableRecord
 100
@@ -1439,6 +1505,8 @@ F
 0
 LAYER
 5
+511
+330
 50b
 100
 AcDbSymbolTableRecord
@@ -1457,7 +1525,9 @@ F
 0
 LAYER
 5
-50c
+512
+330
+50b
 100
 AcDbSymbolTableRecord
 100
@@ -1879,7 +1949,7 @@ ENTITIES
 0
 TEXT
 5
-50d
+515
 100
 AcDbEntity
 8
@@ -1905,7 +1975,7 @@ DXF testing
 51
 0
 7
-STANDARD
+Consolas Regular
 71
 0
 72
@@ -1923,7 +1993,7 @@ AcDbText
 0
 LINE
 5
-50e
+516
 100
 AcDbEntity
 8
@@ -1945,7 +2015,7 @@ AcDbLine
 0
 LINE
 5
-50f
+517
 100
 AcDbEntity
 8
@@ -1967,7 +2037,7 @@ AcDbLine
 0
 LINE
 5
-510
+518
 100
 AcDbEntity
 8
@@ -1989,7 +2059,7 @@ AcDbLine
 0
 LINE
 5
-511
+519
 100
 AcDbEntity
 8
@@ -2011,7 +2081,7 @@ AcDbLine
 0
 CIRCLE
 5
-512
+51a
 100
 AcDbEntity
 8
@@ -2029,7 +2099,7 @@ AcDbCircle
 0
 CIRCLE
 5
-513
+51b
 100
 AcDbEntity
 8
@@ -2047,7 +2117,7 @@ AcDbCircle
 0
 ARC
 5
-514
+51c
 100
 AcDbEntity
 8
@@ -2073,7 +2143,7 @@ AcDbArc
 0
 ARC
 5
-515
+51d
 100
 AcDbEntity
 8
@@ -2099,7 +2169,7 @@ AcDbArc
 0
 POINT
 5
-516
+51e
 100
 AcDbEntity
 8
@@ -2115,7 +2185,7 @@ AcDbPoint
 0
 POINT
 5
-517
+51f
 100
 AcDbEntity
 8
@@ -2131,7 +2201,7 @@ AcDbPoint
 0
 POINT
 5
-518
+520
 100
 AcDbEntity
 8
@@ -2147,7 +2217,7 @@ AcDbPoint
 0
 POINT
 5
-519
+521
 100
 AcDbEntity
 8
@@ -2160,6 +2230,74 @@ AcDbPoint
 0
 30
 0
+0
+IMAGE
+5
+500
+330
+1F
+100
+AcDbEntity
+8
+black
+ 92
+      140
+310
+8C000000010000008400000006000000050000002E34B09D88A726407EF7FEBB3CE326400000000000000000EB14D992C3BA40407EF7FEBB3CE326400000000000000000EB14D992C3BA404011E9EC0694E73F4000000000000000002E34B09D88A7264011E9EC0694E73F4000000000000000002E34B09D88A726407EF7FE
+310
+BB3CE326400000000000000000
+100
+AcDbRasterImage
+90
+        0
+10
+0
+20
+0
+30
+0
+ 11
+0.34013605442177
+ 21
+0
+ 31
+0
+ 12
+0
+ 22
+0.34013605442177
+ 32
+0
+ 13
+147
+ 23
+110
+340
+501
+ 70
+     7
+280
+     0
+281
+     50
+282
+     50
+283
+     0
+360
+502
+ 71
+     1
+ 91
+     2
+ 14
+-0.5
+ 24
+-0.5
+ 14
+146.5
+ 24
+109.5
 0
 ENDSEC
 0
@@ -2180,7 +2318,81 @@ AcDbDictionary
 ACAD_GROUP
 350
 D
+3
+ACAD_IMAGE_DICT
+350
+504
+  3
+ACAD_IMAGE_VARS
+350
+505
 0
+IMAGEDEF_REACTOR
+  5
+502
+330
+500
+100
+AcDbRasterImageDefReactor
+ 90
+        2
+330
+500
+  0
+DICTIONARY
+5
+504
+102
+{ACAD_REACTORS
+330
+503
+102
+}
+330
+503
+100
+AcDbDictionary
+ 0
+ DICTIONARY
+ 5
+504
+102
+{ACAD_REACTORS
+330
+503
+102
+}
+330
+503
+100
+AcDbDictionary
+3
+PELUDITO.PNG
+350
+503
+ 0
+RASTERVARIABLES
+  5
+505
+102
+{ACAD_REACTORS
+330
+503
+102
+}
+330
+503
+100
+AcDbRasterVariables
+90
+       0
+70
+    1
+71
+    1
+72
+    0
+ 0
 DICTIONARY
 5
 D
@@ -2191,6 +2403,38 @@ AcDbDictionary
 281
 1
 0
+IMAGEDEF
+5
+501
+102
+{ACAD_REACTORS
+330
+504
+330
+502
+102
+}
+330
+504
+100
+AcDbRasterImageDef
+90
+     0
+  1
+./peludito.png
+ 10
+147
+ 20
+110
+ 11
+0.34013605442177
+ 21
+0.34013605442177
+280
+  1
+281
+  3
+  0
 ENDSEC
 0
 EOF

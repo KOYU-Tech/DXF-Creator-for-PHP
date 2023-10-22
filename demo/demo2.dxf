@@ -1233,7 +1233,7 @@ LTYPE
 5
 501
 330
-5
+500
 100
 AcDbSymbolTableRecord
 100
@@ -1255,7 +1255,7 @@ LTYPE
 5
 502
 330
-5
+500
 100
 AcDbSymbolTableRecord
 100
@@ -1350,6 +1350,8 @@ AcDbSymbolTable
 LAYER
 5
 506
+330
+505
 100
 AcDbSymbolTableRecord
 100
@@ -1368,6 +1370,8 @@ F
 LAYER
 5
 507
+330
+505
 100
 AcDbSymbolTableRecord
 100
