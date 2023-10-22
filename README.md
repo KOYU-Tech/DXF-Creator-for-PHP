@@ -7,16 +7,12 @@ This code is the upgrade of [DXF-Writer](http://www.phpclasses.org/package/7954-
 
 Miscellaneous with image:
 
-
-
-
 ```
-//setting image data
+// Setting image data
 $path="./peludito.png";
 $size=getimagesize($path);
 $width=$size[0];
 $height=$size[1];
-
 
 $dxf = new Creator(Creator::MILLIMETERS);
 $dxf->addText(26, 46, 0, 'DXF testing', 8)
@@ -38,7 +34,7 @@ $dxf->addText(26, 46, 0, 'DXF testing', 8)
     ->addPoint(0, 100, 0)
     ->addPoint(100, 100, 0)
     ->addPoint(100, 0, 0)
-	->addImage(0, 0, 0, 50, 50, 0, $path, $width, $height)
+    ->addImage(0, 0, 0, 50, 50, 0, $path, $width, $height)
     ->saveToFile('demo.dxf');
 ```
 

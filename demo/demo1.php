@@ -11,6 +11,12 @@ use adamasantares\dxf\Creator;
 use adamasantares\dxf\Color;
 use adamasantares\dxf\LineType;
 
+$path="./peludito.png";
+$size=getimagesize($path);
+$width=$size[0];
+$height=$size[1];
+
+
 $dxf = new Creator();
 $dxf
     ->addText(26, 46, 0, 'DXF testing', 8)
@@ -32,6 +38,7 @@ $dxf
     ->addPoint(0, 100, 0)
     ->addPoint(100, 100, 0)
     ->addPoint(100, 0, 0)
+    ->addImage(0, 0, 0, 50, 50, 0, $path, $width, $height)
     ->saveToFile(dirname(__FILE__) . '/demo1.dxf');
 
 exit("   Done (" . dirname(__FILE__) . "/demo1.dxf)\n");
