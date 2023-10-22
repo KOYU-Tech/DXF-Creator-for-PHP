@@ -11,36 +11,13 @@
  *
  * @see About DXF structure http://help.autodesk.com/cloudhelp/2016/ENU/AutoCAD-DXF/files/GUID-235B22E0-A567-4CF6-92D3-38A2306D73F3.htm
  * @see ENTITIES Section http://help.autodesk.com/cloudhelp/2016/ENU/AutoCAD-DXF/files/GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484.htm
- * @see 	Common Symbol Table Group Codes http://help.autodesk.com/cloudhelp/2016/ENU/AutoCAD-DXF/files/GUID-8427DD38-7B1F-4B7F-BF66-21ADD1F41295.htm
+ * @see Common Symbol Table Group Codes http://help.autodesk.com/cloudhelp/2016/ENU/AutoCAD-DXF/files/GUID-8427DD38-7B1F-4B7F-BF66-21ADD1F41295.htm
  *
- * @example <code>
- *     $dxf = new \adamasantares\dxf\Creator( \adamasantares\dxf\Creator::INCHES );
- *     $dxf->addText(26, 46, 0, 'DXF testing', 8)
- *     ->setLayer('cyan', $color::CYAN)
- *     ->addLine(25, 0, 0, 100, 0, 0)
- *     ->addLine(100, 0, 0, 100, 75, 0)
- *     ->addLine(75, 100, 0, 0, 100, 0)
- *     ->addLine(0, 100, 0, 0, 25, 0)
- *     ->setLayer('blue', $color::BLUE, $ltype::DASHDOT)
- *     ->addCircle(0, 0, 0, 25)
- *     ->setLayer('custom', $color::rgb(10, 145, 230), $ltype::DASHED)
- *     ->addCircle(100, 100, 0, 25)
- *     ->setLayer('red', $color::RED)
- *     ->addArc(0, 100, 0, 25, 0.0, 270.0)
- *     ->setLayer('magenta', $color::MAGENTA)
- *     ->addArc(100, 0, 0, 25, 180.0, 90.0)
- *     ->setLayer('black')
- *     ->addPoint(0, 0, 0)
- *     ->addPoint(0, 100, 0)
- *     ->addPoint(100, 100, 0)
- *     ->addPoint(100, 0, 0)
- *     ->saveToFile('demo.dxf');
- * </code>
  */
 
 namespace adamasantares\dxf;
 
-ini_set('display_errors',true);
+// ini_set('display_errors',true);
 
 /**
  * Class Creator
@@ -82,14 +59,11 @@ class Creator {
     private $layers = [];
 
     private $lTypes = [];
-	
-	
-    /**
-     * @var array image collection
-     */	
-	private $images = [];
-	
-	
+
+    private $textStyles = [];
+
+    private $textStyleName = 'STANDARD';
+
     /**
      * Current layer name
      * @var int
@@ -202,6 +176,38 @@ class Creator {
         return $this;
     }
 
+    /**
+     * Sets current style for drawing. If style does not exist then it will be created.
+     * @param string $params [name, font]
+     * @return Creator Instance
+     */
+    public function setTextStyle($name, $font, $stdFlags = 0, $fixedHeight = 0, $widthFactor = 0, $obliqueAngle = 0, $textGenerationFlags = 0, $lastHeightUsed = 0, $bigFont = null)
+    {
+        if ( !isset($this->textStyles[$name]) ) {
+            $this->textStyles[$name] = [
+                'name' => $name,
+                'font' => $font,
+                'stdFlags' => $stdFlags,
+                'fixedHeight' => $fixedHeight,
+                'widthFactor' => $widthFactor,
+                'obliqueAngle' => $obliqueAngle,
+                'textGenerationFlags' => $textGenerationFlags,
+                'lastHeightUsed' => $lastHeightUsed,
+                'bigFont' => $bigFont,
+            ];
+        }
+        $this->textStyleName = $name;
+        return $this;
+    }
+
+
+    /**
+     * Returns current style name
+     */
+    public function getTextStyle()
+    {
+        return $this->textStyleName;
+    }
 
     private function getEntityHandle()
     {
@@ -406,7 +412,7 @@ class Creator {
             "51\n" . // Oblique angle (optional; default = 0)
             "0\n" .
             "7\n" . // Text style name (optional, default = STANDARD)
-            "STANDARD\n" .
+            "{$this->textStyleName}\n" .
             "71\n" . // Text generation flags (optional, default = 0)
             "0\n" .
             "72\n" . // Horizontal text justification type (optional, default = 0) integer codes (not bit-coded): 0 = Left, 1= Center, 2 = Right, 3 = Aligned, 4 = Middle, 5 = Fit
@@ -461,6 +467,7 @@ class Creator {
         return $this;
     }
 
+
 	/**
 	 * Add Image Reference to current Layer
      * @param float $x
@@ -475,113 +482,105 @@ class Creator {
      * @return Creator Instance
 	 * @see http://help.autodesk.com/view/ACD/2016/ENU/?guid=GUID-3A2FF847-BE14-4AC5-9BD4-BD3DCAEF2281
 	 */
-	  public function addImage($x, $y, $z, $x2, $y2, $z2, $path, $sizeu, $sizev){
-	  	$x += $this->offset[0];
-        $y += $this->offset[1];
-        $z += $this->offset[2];
-        $x2 += $this->offset[0];
-        $y2 += $this->offset[1];
-        $z2 += $this->offset[2];
+	  public function addImage($x, $y, $z, $x2, $y2, $z2, $path, $sizeu, $sizev)
+      {
+            $x += $this->offset[0];
+            $y += $this->offset[1];
+            $z += $this->offset[2];
+            $x2 += $this->offset[0];
+            $pixelSize = abs($x2 - $x) / $sizeu;
+
+            $imageKey = explode('/', $path);
+            $imageKey=strtoupper(end($imageKey));
+            $imageKey = str_replace(' ', '', $imageKey);
+
+            $imageHandler = $this->getEntityHandle();
+            $imageDefHandler = $this->getEntityHandle();
+            $imageDefReactorHandler = $this->getEntityHandle();
+
+            $this->images[$imageKey] = [
+                'name' => $imageKey,
+                'path' => $path,
+                'sizeu' => $sizeu,
+                'sizev' => $sizev,
+                'pixelsize' => $pixelSize,
+                'imagehandler' => $imageHandler,
+                'imagedefhandler' => $imageDefHandler,
+                'imagedef_reactorhandler' => $imageDefReactorHandler
+            ];
 		
+		    $clipboundaryvertexu2 = $sizeu - 0.5;
+		    $clipboundaryvertexv2 = $sizev - 0.5;
 				
-		
-		
-		$pixelsize=abs($x2-$x)/$sizeu;
-		
-		$e=explode('/',$path);
-		$up=strtoupper(end($e));
-		$imagenom=str_replace(" ", "", $up);
-		
-		$imagehandler=$this->getEntityHandle();
-		$imagedefhandler=$this->getEntityHandle();
-		$imagedef_reactorhandler=$this->getEntityHandle();
-		
-		
-		$image=array(
-			'name'=>$imagenom,
-			'path'=>$path,
-			'sizeu'=>$sizeu,
-			'sizev'=>$sizev,
-			'pixelsize'=>$pixelsize,
-			'imagehandler'=>$imagehandler,
-			'imagedefhandler'=>$imagedefhandler,
-			'imagedef_reactorhandler'=>$imagedef_reactorhandler
-		);
-		$this->images[$imagenom] = $image;
-		
-		
-		$clipboundaryvertexu2=$sizeu-0.5;
-		$clipboundaryvertexv2=$sizev-0.5;
-				
-		$this->shapes[] = "IMAGE\n" .
-            "5\n" . // Entity Handle
-            "{$imagehandler}\n" .
-            "330\n" . // ????
-            "1F\n" . // space handler 1F is hardcoded in tamplate.dxf
-            "100\n" . // Subclass marker (AcDbEntity)
-            "AcDbEntity\n" .
-            "8\n" . // Layer name
-            "{$this->layerName}\n" .
-            " 92\n" . // binary chunk ????
-            "      140\n" .// binary chunk ???? TODO: generate 140 binary codede properly
-            "310\n" .// binary chunk ????
-            "8C000000010000008400000006000000050000002E34B09D88A726407EF7FEBB3CE326400000000000000000EB14D992C3BA40407EF7FEBB3CE326400000000000000000EB14D992C3BA404011E9EC0694E73F4000000000000000002E34B09D88A7264011E9EC0694E73F4000000000000000002E34B09D88A726407EF7FE\n" .
-            "310\n" .// binary chunk ????
-            "BB3CE326400000000000000000\n" .            
-            "100\n" . // Subclass marker (AcDbRasterImage)
-            "AcDbRasterImage\n" .
-            "90\n" . // class version
-            "        0\n" .
-            "10\n" . // insertion point x value            
-            "{$x}\n" .
-            "20\n" . // insertion point, Y value
-            "{$y}\n" .
-            "30\n" . // insertion point, Z value
-            "{$z}\n" .
-            " 11\n" . // x value u-vector (in WCS) pixel size horizontal
-            "{$pixelsize}\n" .
-			" 21\n" . // Y value U-vector (in WCS)
-            "0\n" .
-			" 31\n" . // z value U-vector (in WCS)			 
-			"0\n" .		
-			" 12\n" . // x value V-vector (in WCS)
-			"0\n" .
-			" 22\n" . // Y value V-vector (in WCS) pixel size vertical
-            "{$pixelsize}\n" .
-			" 32\n" . // z value V-vector (in WCS)
-			"0\n" .
-			" 13\n" . //image size in pixels x
-			"{$sizeu}\n" .
-			" 23\n" . //image size in pixels y
-			"{$sizev}\n" .
-			"340\n" . //Hard reference to imagedef object 
-			"{$imagedefhandler}\n" .
-			" 70\n" . //Image display properties: 
-			"     7\n" .//default at draftsight 2016
-			"280\n" . //Clipping state: 0 = Off; 1 = On 
-			"     0\n" .
-			"281\n" . //Brightness value (0-100; default = 50) 
-			"     50\n" .
-			"282\n" . //Contrast value (0-100; default = 50) 
-			"     50\n" .
-			"283\n" . //Fade value (0-100; default = 0) 
-			"     0\n" .
-			"360\n" . //Hard reference to imagedef_reactor object 
-			"{$imagedef_reactorhandler}\n" .
-			" 71\n" . //Clipping boundary type. 1 = Rectangular; 2 = Polygonal 
-			"     1\n" .
-			" 91\n" . //Number of clip boundary vertices that follow 
-			"     2\n" .
-			" 14\n" . //Clip boundary vertex (in OCS) DXF: X value; APP: 2D point (multiple entries)
-			"-0.5\n" .
-			" 24\n" . //Clip boundary vertex (in OCS) DXF: y value; APP: 2D point (multiple entries)
-			"-0.5\n" .
-			" 14\n" . //Clip boundary vertex (in OCS) DXF: X value; APP: 2D point (multiple entries)
-			"{$clipboundaryvertexu2}\n" .
-			" 24\n" . //Clip boundary vertex (in OCS) DXF: y value; APP: 2D point (multiple entries)
-			"{$clipboundaryvertexv2}\n" .
-            "0\n";
-        return $this;
+            $this->shapes[] = "IMAGE\n" .
+                "5\n" . // Entity Handle
+                "{$imageHandler}\n" .
+                "330\n" . // ????
+                "1F\n" . // space handler 1F is hardcoded in tamplate.dxf
+                "100\n" . // Subclass marker (AcDbEntity)
+                "AcDbEntity\n" .
+                "8\n" . // Layer name
+                "{$this->layerName}\n" .
+                " 92\n" . // binary chunk ????
+                "      140\n" .// binary chunk ???? TODO: generate 140 binary codede properly
+                "310\n" .// binary chunk ????
+                "8C000000010000008400000006000000050000002E34B09D88A726407EF7FEBB3CE326400000000000000000EB14D992C3BA40407EF7FEBB3CE326400000000000000000EB14D992C3BA404011E9EC0694E73F4000000000000000002E34B09D88A7264011E9EC0694E73F4000000000000000002E34B09D88A726407EF7FE\n" .
+                "310\n" .// binary chunk ????
+                "BB3CE326400000000000000000\n" .
+                "100\n" . // Subclass marker (AcDbRasterImage)
+                "AcDbRasterImage\n" .
+                "90\n" . // class version
+                "        0\n" .
+                "10\n" . // insertion point x value
+                "{$x}\n" .
+                "20\n" . // insertion point, Y value
+                "{$y}\n" .
+                "30\n" . // insertion point, Z value
+                "{$z}\n" .
+                " 11\n" . // x value u-vector (in WCS) pixel size horizontal
+                "{$pixelSize}\n" .
+                " 21\n" . // Y value U-vector (in WCS)
+                "0\n" .
+                " 31\n" . // z value U-vector (in WCS)
+                "0\n" .
+                " 12\n" . // x value V-vector (in WCS)
+                "0\n" .
+                " 22\n" . // Y value V-vector (in WCS) pixel size vertical
+                "{$pixelSize}\n" .
+                " 32\n" . // z value V-vector (in WCS)
+                "0\n" .
+                " 13\n" . //image size in pixels x
+                "{$sizeu}\n" .
+                " 23\n" . //image size in pixels y
+                "{$sizev}\n" .
+                "340\n" . //Hard reference to imagedef object
+                "{$imageDefHandler}\n" .
+                " 70\n" . //Image display properties:
+                "     7\n" .//default at draftsight 2016
+                "280\n" . //Clipping state: 0 = Off; 1 = On
+                "     0\n" .
+                "281\n" . //Brightness value (0-100; default = 50)
+                "     50\n" .
+                "282\n" . //Contrast value (0-100; default = 50)
+                "     50\n" .
+                "283\n" . //Fade value (0-100; default = 0)
+                "     0\n" .
+                "360\n" . //Hard reference to imagedef_reactor object
+                "{$imageDefReactorHandler}\n" .
+                " 71\n" . //Clipping boundary type. 1 = Rectangular; 2 = Polygonal
+                "     1\n" .
+                " 91\n" . //Number of clip boundary vertices that follow
+                "     2\n" .
+                " 14\n" . //Clip boundary vertex (in OCS) DXF: X value; APP: 2D point (multiple entries)
+                "-0.5\n" .
+                " 24\n" . //Clip boundary vertex (in OCS) DXF: y value; APP: 2D point (multiple entries)
+                "-0.5\n" .
+                " 14\n" . //Clip boundary vertex (in OCS) DXF: X value; APP: 2D point (multiple entries)
+                "{$clipboundaryvertexu2}\n" .
+                " 24\n" . //Clip boundary vertex (in OCS) DXF: y value; APP: 2D point (multiple entries)
+                "{$clipboundaryvertexv2}\n" .
+                "0\n";
+            return $this;
 	  }
 	 
 	 
@@ -874,23 +873,27 @@ class Creator {
     {
         $template = file_get_contents(__DIR__ . '/template.dxf');
 		$images = $this->getImagesString();
-		//print_r($images);
         $lTypes = $this->getLtypesString();
         $layers = $this->getLayersString();
+        $textStyles = $this->getTextStylesString();
         $entities = $this->getEntities();
-		
+
         $dxf = str_replace([
             '{LTYPES_TABLE}',
             '{LAYERS_TABLE}',
+            '{UNITS}',
+            '{STYLES_TABLE}',
             '{ENTITIES_SECTION}',
             '{CLASSES_FOR_IMAGES}',
             '{DICTIONARY_IMAGE_VAR}',
-			'{IMAGEDEF_REACTOR}',
-			'{DICTIONARY_IMAGES}',
-			'{IMAGEDEFS}'
+            '{IMAGEDEF_REACTOR}',
+            '{DICTIONARY_IMAGES}',
+            '{IMAGEDEFS}'
         ], [
             $lTypes,
             $layers,
+            $this->units,
+            $textStyles,
             $entities,
             $images['CLASSES_FOR_IMAGES'],
             $images['DICTIONARY_IMAGE_VAR'],
@@ -898,18 +901,7 @@ class Creator {
             $images['DICTIONARY_IMAGES'],
             $images['IMAGEDEFS']
         ], $template);
-        
-        /* $dxf = str_replace([
-            '{LTYPES_TABLE}',
-            '{LAYERS_TABLE}',
-            '{ENTITIES_SECTION}'
-        ], [
-            $lTypes,
-            $layers,
-            $entities
-        ], $template);*/
-            
-        
+
         return  $dxf;
     }
 
@@ -923,249 +915,224 @@ class Creator {
         return rtrim($entities, "\n");
     }
 
-    
-    
-
 
     /**
      * Generates IMAEGADEF AND IMAGEDEF_REACTOR items
-     * @return string
+     *
+     * @return string[]
      * @see http://help.autodesk.com/view/ACD/2016/ENU/?guid=GUID-EFE5319F-A71A-4612-9431-42B6C7C3941F
      * @see http://help.autodesk.com/view/ACD/2016/ENU/?guid=GUID-46C12333-1EDA-4619-B2C9-D7D2607110C8
      */
-    private function getImagesString(){
-    	
+    private function getImagesString()
+    {
 		$dictionaryimagevarHandle = $this->getEntityHandle();				 
         $dictionaryHandle = $this->getEntityHandle();		
 		$rastervariable = $this->getEntityHandle();
-		//echo "images:".count($this->images);
-		
-		if(count($this->images)==0){
-			$strings=array(
-				'CLASSES_FOR_IMAGES'=>'',
-				'DICTIONARY_IMAGE_VAR'=>'',
-				'IMAGEDEF_REACTOR'=>'',
-				'DICTIONARY_IMAGES'=>'',
-				'IMAGEDEFS'=>''
-			);
-	        return $strings;
-		} 
-		
+
+		if ( count($this->images) === 0 ) {
+            return [
+				'CLASSES_FOR_IMAGES' => '',
+				'DICTIONARY_IMAGE_VAR' => '',
+				'IMAGEDEF_REACTOR' => '',
+				'DICTIONARY_IMAGES' => '',
+				'IMAGEDEFS' => ''
+			];
+		}
 					
-		$imagesclasses="\nCLASS\n".
-"1\n".
-"RASTERVARIABLES\n".
-"2\n".
-"AcDbRasterVariables\n".
-"3\n".
-"ISM\n".
-" 90\n".
-"32768\n".
-"280\n".
-" 0\n".
-"281\n".
-" 0\n".
-"0\n".
-"CLASS\n".
-"1\n".
-"IMAGEDEF\n".
-"2\n".
-"AcDbRasterImageDef\n".
-"3\n".
-"ISM\n".
-" 90\n".
-"32768\n".
-"280\n".
-" 0\n".
-"281\n".
-" 0\n".
-"0\n".
-"CLASS\n".
-"1\n".
-"IMAGE\n".
-"2\n".
-"AcDbRasterImage\n".
-"3\n".
-"ISM\n".
-" 90\n".
-"32895\n".
-"280\n".
-" 0\n".
-"281\n".
-" 1\n".
-"0\n".
-"CLASS\n".
-"1\n".
-"IMAGEDEF_REACTOR\n".
-"2\n".
-"AcDbRasterImageDefReactor\n".
-"3\n".
-"ISM\n".
-" 90\n".
-"32769\n".
-"280\n".
-" 0\n".
-"281\n".
-" 0\n".
-"0\n";
+		$imagesclasses = "\nCLASS\n".
+            "1\n".
+            "RASTERVARIABLES\n".
+            "2\n".
+            "AcDbRasterVariables\n".
+            "3\n".
+            "ISM\n".
+            " 90\n".
+            "32768\n".
+            "280\n".
+            " 0\n".
+            "281\n".
+            " 0\n".
+            "0\n".
+            "CLASS\n".
+            "1\n".
+            "IMAGEDEF\n".
+            "2\n".
+            "AcDbRasterImageDef\n".
+            "3\n".
+            "ISM\n".
+            " 90\n".
+            "32768\n".
+            "280\n".
+            " 0\n".
+            "281\n".
+            " 0\n".
+            "0\n".
+            "CLASS\n".
+            "1\n".
+            "IMAGE\n".
+            "2\n".
+            "AcDbRasterImage\n".
+            "3\n".
+            "ISM\n".
+            " 90\n".
+            "32895\n".
+            "280\n".
+            " 0\n".
+            "281\n".
+            " 1\n".
+            "0\n".
+            "CLASS\n".
+            "1\n".
+            "IMAGEDEF_REACTOR\n".
+            "2\n".
+            "AcDbRasterImageDefReactor\n".
+            "3\n".
+            "ISM\n".
+            " 90\n".
+            "32769\n".
+            "280\n".
+            " 0\n".
+            "281\n".
+            " 0\n".
+            "0\n";
 
-		$dictionaryImageVars =	"\n3\n".
-							"ACAD_IMAGE_DICT\n".
-							"350\n".
-							"{$dictionaryHandle}\n".
-							"  3\n".
-							"ACAD_IMAGE_VARS\n".
-							"350\n".
-							"{$rastervariable}\n".
-							"0\n";
-							
+        $dictionaryImageVars =	"\n3\n".
+            "ACAD_IMAGE_DICT\n".
+            "350\n".
+            "{$dictionaryHandle}\n".
+            "  3\n".
+            "ACAD_IMAGE_VARS\n".
+            "350\n".
+            "{$rastervariable}\n".
+            "0\n";
 
-									
-												
-		$dictionaryImages = 	"DICTIONARY\n".
-	        					"5\n".
-	        					"{$dictionaryHandle}\n".
-					        	"102\n".
-					        	"{ACAD_REACTORS\n".
-								"330\n".
-					        	"{$dictionaryimagevarHandle}\n".
-					        	"102\n".
-								"}\n".
-					        	"330\n".
-								"{$dictionaryimagevarHandle}\n".
-								"100\n".
-								"AcDbDictionary\n".
-								" 0\n".
-								" DICTIONARY\n".
-								" 5\n".
-								"{$dictionaryHandle}\n".
-								"102\n".
-								"{ACAD_REACTORS\n".
-								"330\n".
-								"{$dictionaryimagevarHandle}\n".
-								"102\n".
-								"}\n".
-								"330\n".
-								"{$dictionaryimagevarHandle}\n".
-								"100\n".
-								"AcDbDictionary\n";
+		$dictionaryImages = "DICTIONARY\n".
+            "5\n".
+            "{$dictionaryHandle}\n".
+            "102\n".
+            "{ACAD_REACTORS\n".
+            "330\n".
+            "{$dictionaryimagevarHandle}\n".
+            "102\n".
+            "}\n".
+            "330\n".
+            "{$dictionaryimagevarHandle}\n".
+            "100\n".
+            "AcDbDictionary\n".
+            " 0\n".
+            " DICTIONARY\n".
+            " 5\n".
+            "{$dictionaryHandle}\n".
+            "102\n".
+            "{ACAD_REACTORS\n".
+            "330\n".
+            "{$dictionaryimagevarHandle}\n".
+            "102\n".
+            "}\n".
+            "330\n".
+            "{$dictionaryimagevarHandle}\n".
+            "100\n".
+            "AcDbDictionary\n";
 								
 		foreach ($this->images as $imgnom => $img) {
-			
-			$imagehandler = $img['imagehandler'];
-			$imagedefhandler= $img['imagedefhandler'];
-			$imagedef_reactorhandler= $img['imagedef_reactorhandler'];
-						
 			$dictionaryImages.=	"3\n".
-								"{$imgnom}\n".
-								"350\n".
-								"{$dictionaryimagevarHandle}\n";	
-		}	
-		
-		$dictionaryImages .=	" 0\n".
-								"RASTERVARIABLES\n".
-								"  5\n".
-								"{$rastervariable}\n".
-								"102\n".
-								"{ACAD_REACTORS\n".
-								"330\n".
-								"{$dictionaryimagevarHandle}\n".
-								"102\n".
-								"}\n".
-								"330\n".
-								"{$dictionaryimagevarHandle}\n".
-								"100\n".
-								"AcDbRasterVariables\n".
-								"90\n".
-								"       0\n".
-								"70\n".
-								"    1\n".
-								"71\n".
-								"    1\n".
-								"72\n".
-								"    0\n".
-								" 0\n";
-		
-		
-		$imagedef_reactors=	"";		
-		foreach ($this->images as $imgnom => $img) {
-			
-			$imagehandler = $img['imagehandler'];
-			$imagedefhandler= $img['imagedefhandler'];
-			$imagedef_reactorhandler= $img['imagedef_reactorhandler'];
-					
-			$imagedef_reactors.="IMAGEDEF_REACTOR\n".
-							"  5\n".
-							"{$imagedef_reactorhandler}\n".
-							"330\n".
-							"{$imagehandler}\n".
-							"100\n".
-							"AcDbRasterImageDefReactor\n".
-							" 90\n".
-							"        2\n".
-							"330\n".
-							"{$imagehandler}\n".
-							"  0\n";
+                "{$imgnom}\n".
+                "350\n".
+                "{$dictionaryimagevarHandle}\n";
 		}
 		
-							
+		$dictionaryImages .= " 0\n".
+            "RASTERVARIABLES\n".
+            "  5\n".
+            "{$rastervariable}\n".
+            "102\n".
+            "{ACAD_REACTORS\n".
+            "330\n".
+            "{$dictionaryimagevarHandle}\n".
+            "102\n".
+            "}\n".
+            "330\n".
+            "{$dictionaryimagevarHandle}\n".
+            "100\n".
+            "AcDbRasterVariables\n".
+            "90\n".
+            "       0\n".
+            "70\n".
+            "    1\n".
+            "71\n".
+            "    1\n".
+            "72\n".
+            "    0\n".
+            " 0\n";
 		
-		$imagesdef = "";
+		
+		$imageDefReactors = '';
 		foreach ($this->images as $imgnom => $img) {
-			
-			$imagehandler = $img['imagehandler'];
-			$imagedefhandler= $img['imagedefhandler'];
-			$imagedef_reactorhandler= $img['imagedef_reactorhandler'];
-			
-			$path=$img['path'];
-			$sizeu=$img['sizeu'];
-			$sizev=$img['sizev'];
-			$pixelsize=$img['pixelsize'];
-			
-			$imagesdef .= 	"\nIMAGEDEF\n".
-				        	"5\n".
-				        	"{$imagedefhandler}\n".
-				        	"102\n".
-				        	"{ACAD_REACTORS\n".
-							"330\n".
-				        	"{$dictionaryHandle}\n".
-				        	"330\n".
-				        	"{$imagedef_reactorhandler}\n".
-				        	"102\n".
-				        	"}\n".
-				        	"330\n".
-				        	"{$dictionaryHandle}\n".
-				        	"100\n".
-				        	"AcDbRasterImageDef\n".
-							"90\n".
-							"     0\n".
-							"  1\n".
-							"{$path}\n".
-							" 10\n".
-							"{$sizeu}\n".
-							" 20\n".
-							"{$sizev}\n".
-							" 11\n".
-							"{$pixelsize}\n".							
-							" 21\n".
-							"{$pixelsize}\n".	
-							"280\n".
-							"  1\n".
-							"281\n".
-							"  3\n".
-							"  0\n";
+			$imageHandler = $img['imagehandler'];
+			$imageDefReactorHandler= $img['imagedef_reactorhandler'];
+			$imageDefReactors .= "IMAGEDEF_REACTOR\n".
+                "  5\n".
+                "{$imageDefReactorHandler}\n".
+                "330\n".
+                "{$imageHandler}\n".
+                "100\n".
+                "AcDbRasterImageDefReactor\n".
+                " 90\n".
+                "        2\n".
+                "330\n".
+                "{$imageHandler}\n".
+                "  0\n";
+		}
+		
+		$imagesDef = '';
+		foreach ($this->images as $imgnom => $img) {
+			$imageDefHandler = $img['imagedefhandler'];
+			$imageDefReactorHandler = $img['imagedef_reactorhandler'];
+			$path = $img['path'];
+			$sizeu = $img['sizeu'];
+			$sizev = $img['sizev'];
+			$pixelsize = $img['pixelsize'];
+			$imagesDef .= "\nIMAGEDEF\n".
+                "5\n".
+                "{$imageDefHandler}\n".
+                "102\n".
+                "{ACAD_REACTORS\n".
+                "330\n".
+                "{$dictionaryHandle}\n".
+                "330\n".
+                "{$imageDefReactorHandler}\n".
+                "102\n".
+                "}\n".
+                "330\n".
+                "{$dictionaryHandle}\n".
+                "100\n".
+                "AcDbRasterImageDef\n".
+                "90\n".
+                "     0\n".
+                "  1\n".
+                "{$path}\n".
+                " 10\n".
+                "{$sizeu}\n".
+                " 20\n".
+                "{$sizev}\n".
+                " 11\n".
+                "{$pixelsize}\n".
+                " 21\n".
+                "{$pixelsize}\n".
+                "280\n".
+                "  1\n".
+                "281\n".
+                "  3\n".
+                "  0\n";
         }			
-		
-		
-		
-		$strings=array(
-			'CLASSES_FOR_IMAGES'=>rtrim($imagesclasses, "\n"),
-			'DICTIONARY_IMAGE_VAR'=>$dictionaryImageVars,
-			'IMAGEDEF_REACTOR'=>$imagedef_reactors,
-			'DICTIONARY_IMAGES'=>rtrim($dictionaryImages, "\n"),
-			'IMAGEDEFS'=>rtrim($imagesdef, "\n")
-		);
 
+		$strings = [
+			'CLASSES_FOR_IMAGES' => rtrim($imagesclasses, "\n"),
+			'DICTIONARY_IMAGE_VAR' => $dictionaryImageVars,
+			'IMAGEDEF_REACTOR' => $imageDefReactors,
+			'DICTIONARY_IMAGES' => rtrim($dictionaryImages, "\n"),
+			'IMAGEDEFS' => rtrim($imagesDef, "\n")
+		];
 
         return $strings;
     }
@@ -1211,6 +1178,7 @@ class Creator {
         return rtrim($lTypes, "\n");
     }
 
+
     /**
      * Generates LAYERS
      * @return string
@@ -1220,7 +1188,7 @@ class Creator {
     {
         $ownerNumber = $this->getEntityHandle();
         $layers = "LAYER\n5\n{$ownerNumber}\n330\n0\n100\nAcDbSymbolTable\n70\n1\n0\n";
-        if (count($this->layers) > 0) {
+        if ( count($this->layers) > 0 ) {
             foreach ($this->layers as $name => $layer) {
                 $number = $this->getEntityHandle();
                 $layers .= "LAYER\n" .
@@ -1249,10 +1217,55 @@ class Creator {
     }
 
 
+    /**
+     * Generates TEXTSTYLES
+     * @return string
+     * @see https://help.autodesk.com/cloudhelp/2016/ENU/AutoCAD-DXF/files/GUID-EF68AF7C-13EF-45A1-8175-ED6CE66C8FC9.htm
+     */
+    private function getTextStylesString()
+    {
+        $ownerNumber = $this->getEntityHandle();
+        $textStyles = "STYLE\n5\n{$ownerNumber}\n330\n0\n100\nAcDbSymbolTable\n70\n3\n0\n";
+
+        if (count($this->textStyles) > 0) {
+            foreach ($this->textStyles as $name => $style) {
+                $number = $this->getEntityHandle();
+                $textStyles .= "STYLE\n" .
+                    "5\n" .
+                    "{$number}\n" .
+                    "330\n" .
+                    "{$ownerNumber}\n" .
+                    "100\n" . // Subclass marker
+                    "AcDbSymbolTableRecord\n" . // Subclass marker value
+                    "100\n" . // Subclass marker group code
+                    "AcDbTextStyleTableRecord\n" . // Subclass marker value
+                    "2\n" . // Style name group code
+                    "{$style['name']}\n" . // Style name value
+                    "70\n" . // Standard flags group code
+                    "{$style['stdFlags']}\n" . // Standard flags values
+                    "40\n" . // Fixed text height group code
+                    "{$style['fixedHeight']}\n" . // Fixed text height value;
+                    "41\n" . // Width factor group code
+                    "{$style['widthFactor']}\n" . // Width factor value
+                    "50\n" . // Oblique angle group code
+                    "{$style['obliqueAngle']}\n" . // Oblique angle value
+                    "71\n" . // Text generation flags group code
+                    "{$style['textGenerationFlags']}\n" . // Text generation flags value; 2 = Text is backward (mirrored in X); 4 = Text is upside down (mirrored in Y)
+                    "42\n" . // Last height used group code
+                    "{$style['lastHeightUsed']}\n" . // Last height used value
+                    "3\n" . // Primary font file name group code
+                    "{$style['font']}\n" . // Primary font file name value
+                    "4\n" . // Bigfont file name group code
+                    "{$style['bigFont']}\n"; // Bigfont file name value; blank if none
+            }
+
+            $textStyles .= "0\n";
+        }
+        return rtrim($textStyles, "\n");
+    }
+
     public function __toString(){
         return $this->getString();
     }
-
-
 
 }

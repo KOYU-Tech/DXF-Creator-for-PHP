@@ -18,7 +18,7 @@ $height=$size[1];
 
 
 $dxf = new Creator();
-$dxf
+$dxf->setTextStyle('Consolas Regular', 'consola')
     ->addText(26, 46, 0, 'DXF testing', 8)
     ->setLayer('cyan', Color::CYAN)
     ->addLine(25, 0, 0, 100, 0, 0)
