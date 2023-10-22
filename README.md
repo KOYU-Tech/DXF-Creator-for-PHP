@@ -47,14 +47,14 @@ Result:
 ## Install by Composer
 
 ```
-composer require adamasantares/dxf "0.1.5"
+composer require adamasantares/dxf "0.1.6"
 ```
 
 or
 
 ```
 "require": {
-      "adamasantares/dxf": "0.1.5"
+      "adamasantares/dxf": "0.1.6"
   }
 ```
 
