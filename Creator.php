@@ -7,6 +7,10 @@
  *
  * Upgrade script to "Creator"
  * @author Konstantin Kutsevalov <adamasantares@gmail.com>
+ * @contributor Mario Fèvre https://github.com/mariofevre
+ * @contributor azercon https://github.com/azercon
+ * @contributor Michiel Vancoillie https://github.com/dive-michiel
+ * @contributor Mangirdas Skripka https://github.com/maskas
  * @since 2015/08
  *
  * @see About DXF structure http://help.autodesk.com/cloudhelp/2016/ENU/AutoCAD-DXF/files/GUID-235B22E0-A567-4CF6-92D3-38A2306D73F3.htm
